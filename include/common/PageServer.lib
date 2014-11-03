@@ -1,0 +1,32 @@
+<?php
+
+class PageServer extends Multiton
+{
+  private $page = null;
+
+  public function __construct($id)
+  {
+    parent::__construct($id);
+    // Separate page path from page id
+    $uid = (strpos($id, '/') !== false)?substr($id, strrpos($id, '/')+1):$id;
+
+    if (!is_file($this->base->PAGESDIR.$this->base->PAGESCONTAINER . '/' . $id . '/'. $uid . '.page'))
+      return;
+    $this->page = new PageSource(
+      new FileSource($this->base->PAGESDIR, $this->base->PAGESCONTAINER . '/' . $id . '/', $uid . '.page'),
+      new FastObjectSource(
+        new FileSource($this->base->CACHE1DIR, 'afo/'. $this->base->PAGESCONTAINER . '/' . $id . '/', $uid . '.page.afo', true),
+        $this->base->SHM?new SHMSource($this->base->PAGESCONTAINER . '/' . $id . '/' . $uid . '.page.afo', $this->base->SHM):null
+        )
+      );
+  }
+  
+  public function read()
+  {
+    if ($this->page)
+      return $this->page->read();
+    return null;
+  }
+}
+
+?>

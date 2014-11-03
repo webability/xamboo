@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language id="message" lang="es">
+<!-- Messages from DomCore -->
+  <entry id="WAMessage.notfound"><![CDATA[Error: El mensaje no ha sido encontrado con el ID:&nbsp;]]></entry>
+  <entry id="WAObject.badget"><![CDATA[Error: El atributo a leer no existe:&nbsp;]]></entry>
+  <entry id="WAObject.badset"><![CDATA[Error: El atributo a escribir no existe:&nbsp;]]></entry>
+  <entry id="WAObject.badcall"><![CDATA[Error: El método llamado no existe:&nbsp;]]></entry>
+  <entry id="WAClass.serial"><![CDATA[Error: Debe declarar su propio método serial().]]></entry>
+  <entry id="WAClass.unserial"><![CDATA[Error: Debe declarar su propio método unserial().]]></entry>
+  <entry id="WAFile.mkdirproblem"><![CDATA[Error: La carpeta no pudo ser creada:&nbsp;]]></entry>
+  <entry id="WAFile.unknownfile"><![CDATA[Error: El archivo no fue reconocido:&nbsp;]]></entry>
+  <entry id="WAFile.baddir"><![CDATA[Error: la carpeta para borrar no cumple con los requisitos para poder borrarla:&nbsp;]]></entry>
+  <entry id="WASHM.nosharedmemory"><![CDATA[Error: No hay memoria compartida disponible.]]></entry>
+  <entry id="WASHM.noattach"><![CDATA[Error: La conección con la memoria compartida falló.]]></entry>
+  <entry id="FileSource.fileerror"><![CDATA[Error: El archivo no se pudo abrir en escritura:&nbsp;]]></entry>
+  <entry id="Singleton.nocore"><![CDATA[Error: El singleton ya existe y no puede ser clonado:&nbsp;]]></entry>
+  <entry id="Multiton.nocore"><![CDATA[Error: El multiton ya existe y no puede ser clonado:&nbsp;]]></entry>
+<!-- End Messages from DomCore -->
+<!-- Messages from Xamboo -->
+  <entry id="Xamboo.notfound"><![CDATA[Error: El mensaje no ha sido encontrado con el ID:&nbsp;]]></entry>
+<!-- End Messages from Xamboo -->
+
+</language>

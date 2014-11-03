@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language id="message" lang="fr">
+<!-- Messages from DomCore -->
+  <entry id="WAMessage.notfound"><![CDATA[Erreur: Le message n'a pas pu être trouvé avec l'ID:&nbsp;]]></entry>
+  <entry id="WAObject.badget"><![CDATA[Erreur: L'attribut à lire n'existe pas:&nbsp;]]></entry>
+  <entry id="WAObject.badset"><![CDATA[Erreur: L'attribut à écrire n'existe pas:&nbsp;]]></entry>
+  <entry id="WAObject.badcall"><![CDATA[Erreur: La fonction à appeler n'existe pas:&nbsp;]]></entry>
+  <entry id="WAClass.serial"><![CDATA[Erreur: Il faut déclarer la fonction serial().]]></entry>
+  <entry id="WAClass.unserial"><![CDATA[Erreur: Il faut déclarer la fonction unserial().]]></entry>
+  <entry id="WAFile.mkdirproblem"><![CDATA[Erreur: Le répertoire n'a pas pu être fabriqué:&nbsp;]]></entry>
+  <entry id="WAFile.unknownfile"><![CDATA[Erreur: Le fichier n'a pas été reconnu:&nbsp;]]></entry>
+  <entry id="WAFile.baddir"><![CDATA[Erreur: Le répertoire à effacer ne correspond pas aux conditions pour pouvoir l'effacer:&nbsp;]]></entry>
+  <entry id="WASHM.nosharedmemory"><![CDATA[Erreur: Il n'y a pas de mémoire compartie disponible]]></entry>
+  <entry id="WASHM.noattach"><![CDATA[Erreur: La connection avec la mémoire compartie n'a pas pu s'établir]]></entry>
+  <entry id="FileSource.fileerror"><![CDATA[Erreur: Le fichier n'a pas pu être créé en écriture:&nbsp;]]></entry>
+  <entry id="Singleton.nocore"><![CDATA[Error: Le singleton existe déjà et ne peut pas être cloné:&nbsp;]]></entry>
+  <entry id="Multiton.nocore"><![CDATA[Error: Le multiton existe déjà et ne peut pas être cloné:&nbsp;]]></entry>
+<!-- End Messages from DomCore -->
+</language>

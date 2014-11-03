@@ -1,0 +1,35 @@
+<?php
+
+class CodeServer extends Multiton
+{
+  private $code = null;
+
+  public function __construct($id)
+  {
+    parent::__construct($id);
+
+    // Separate page path from page id
+    $uid = (strpos($id, '/') !== false)?substr($id, strrpos($id, '/')+1):$id;
+    // $uid is <pageid>.<version>.<language>
+    $path = strtok($id, '.');
+
+    if (!is_file($this->base->PAGESDIR.$this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.code'))
+      return;
+    $this->code = new CodeSource(
+      new FileSource($this->base->PAGESDIR, $this->base->PAGESCONTAINER . '/'. $path .'/', $uid . '.code'),
+      new FastObjectSource(
+        new FileSource($this->base->CACHE1DIR, 'afo/'. $this->base->PAGESCONTAINER . '/' . $path .'/', $uid . '.code.afo', true),
+        $this->base->SHM?new SHMSource($this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.code.afo', $this->base->SHM):null
+        )
+      );
+  }
+  
+  public function read()
+  {
+    if ($this->code)
+      return $this->code->read();
+    return null;
+  }
+}
+
+?>

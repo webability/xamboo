@@ -1,0 +1,167 @@
+<?php
+
+/*
+    WALanguage.lib, DomCore, the WebAbility(r) Core System
+    Contains the basic class to contains a language table
+    (c) 2008-2012 Philippe Thomassigny
+
+    This file is part of DomCore
+
+    DomCore is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    DomCore is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* @UML_Box
+|------------------------------------------------------------------|
+| WALanguage: Language table                                       |
+|------------------------------------------------------------------|
+| # id: string                                                     |
+| # lang: boolean                                                  |
+| # entries: Array(id => string)                                   |
+|------------------------------------------------------------------|
+| + new WALanguage($data, $id = null, $lang = null)                |
+| + getId(): string                                                |
+| + getLang(): string                                              |
+| + getEntry($id: string): string                                  |
+| + delEntry($id: string): void                                    |
+| + setEntry($id: string, $data: string): void                     |
+| + rewind(): void                                                 |
+| + current(): string                                              |
+| + key(): string                                                  |
+| + next(): string                                                 |
+| + valid(): boolean                                               |
+| # serial($data: array): void                                     |
+| # unserial($data: array): void                                   |
+| + __toString(): string                                           |
+|------------------------------------------------------------------|
+@End_UML_Box */
+
+// Class to manage language table
+class WALanguage extends WAClass implements Iterator
+{
+  protected $id = '';
+  protected $lang = '';
+  protected $entries = array();
+
+  public function __construct($data, $id = null, $lang = null)
+  {
+    parent::__construct();
+
+    if (is_string($data))
+    { // XML buffer
+      $this->entries = WALanguageCompiler::compile($data);
+      $this->id = WALanguageCompiler::$id;
+      $this->lang = WALanguageCompiler::$lang;
+    }
+    else if (is_array($data))
+    {
+      if (isset($data['id']))
+        $this->id = $data['id'];
+      else
+        $this->id = $id;
+      if (isset($data['lang']))
+        $this->lang = $data['lang'];
+      else
+        $this->lang = $lang;
+      if (isset($data['entries']))
+        $this->entries = $data['entries'];
+    }
+  }
+
+  public function getId()
+  {
+    return $this->id;
+  }
+
+  public function getLang()
+  {
+    return $this->lang;
+  }
+
+  // ads or modify an entry
+  public function setEntry($id, $data)
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("include/core/WALanguage->setEntry($id, $data)", WADebug::SYSTEM);
+
+    $this->entries[$id] = $data;
+  }
+
+  // delete an entry
+  public function delEntry($id)
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("include/core/WALanguage->delEntry($id)", WADebug::SYSTEM);
+
+    if (isset($this->entries[$id]))
+    {
+      unset($this->entries[$id]);
+    }
+  }
+
+  // get only 1 entry
+  public function getEntry($id)
+  {
+    if (isset($this->entries[$id]))
+      return $this->entries[$id];
+    return $id;
+  }
+
+  // Iterator implemented
+  public function rewind()
+  {
+    reset($this->entries);
+  }
+
+  public function current()
+  {
+    return current($this->entries);
+  }
+
+  public function key()
+  {
+    return key($this->entries);
+  }
+
+  public function next()
+  {
+    return next($this->entries);
+  }
+
+  public function valid()
+  {
+    return key($this->entries) !== null;
+  }
+
+  protected function serial(&$data)
+  {
+    $data['id'] = $this->id;
+    $data['lang'] = $this->lang;
+    $data['entries'] = $this->entries;
+  }
+
+  protected function unserial($data)
+  {
+    $this->id = $data['id'];
+    $this->lang = $data['lang'];
+    $this->entries = $data['entries'];
+  }
+
+  public function __toString()
+  {
+    return WALanguageCompiler::create($this->id, $this->lang, $this->entries);
+  }
+
+}
+
+?>

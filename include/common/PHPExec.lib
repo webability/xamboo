@@ -1,0 +1,58 @@
+<?php
+
+class PHPExec extends WAClass
+{
+  private $catch = false;
+  private $code = "";
+  private $xbcode;
+  private $engine;
+
+  public function __construct($xbcode, $engine)
+  {
+    parent::__construct();
+    $this->xbcode = $xbcode;
+    $this->engine = $engine;
+  }
+
+  public function setCode($code)
+  {
+    $this->code = $code;
+  }
+
+  public function setCatch($catch)
+  {
+    $this->catch = $catch;
+  }
+
+  public function execute()
+  {
+    // filtrar los comandos NO autorizados !
+    if ($this->catch)
+    {
+      ob_start();
+    }
+    $TEXT = "";
+    $base = $this->base;
+    $engine = $this->engine;
+
+//    $MetaLanguage = new MetaLanguage($this->engine);
+    $HTTPRequest = $this->base->HTTPRequest;
+    $HTTPResponse = $this->base->HTTPResponse;
+    $HTTPResponse->resetBuffer();
+
+    $datos = eval($this->code);
+//    if ($datos === false)
+//      $TEXT .= $this->code;
+    $TEXT .= $datos;
+    $TEXT = $HTTPResponse->getBuffer() . $TEXT;
+    if ($this->catch)
+    {
+      $TEXT .= ob_get_contents();
+      ob_end_clean();
+    }
+    return $TEXT;
+  }
+
+}
+
+?>

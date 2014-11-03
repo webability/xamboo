@@ -1,0 +1,50 @@
+<?php
+
+/*
+    __autoload.lib, DomCore, the WebAbility(r) Core System
+    Contains the auto class loader for PHP
+    (c) 2010 Philippe Thomassigny
+
+    This file is part of DomCore
+
+    DomCore is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    DomCore is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+function __autoload($classname)
+{
+  $dirs = array(
+    './',
+    '../include/common/',
+    '../include/core/',
+    '../include/patterns/',
+    '../include/datasources/',
+    '../include/throwables/'
+  );
+
+  $found = false;
+  foreach($dirs as $d)
+  {
+    if (is_file($d.$classname.'.lib'))
+    {
+      include_once $d.$classname.'.lib';
+      $found = true;
+      break;
+    }
+  }
+
+  if (!$found)
+    throw new Exception("The common library <b>$classname</b> doesn't exist.");
+}
+
+?>

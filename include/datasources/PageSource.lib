@@ -1,0 +1,137 @@
+<?php
+
+/*
+    pageSource.lib, Xamboo
+    Contains the object to compile and use templates
+    (c) 2008-2012 Philippe Thomassigny
+
+    This file is part of Xamboo
+
+    Xamboo is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Xamboo is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* @UML_Box -- Do not edit
+|------------------------------------------------------------------|
+| pageSource : page 4-levels access object                 |
+|------------------------------------------------------------------|
+| # originsource : DataSource extended object                      |
+| # fastobjectsource : FastObjectSource extended object            |
+| # loaded : boolean                                               |
+| - tm1 : timestamp of originsource                                |
+| - tm2 : timestamp of fastobjectsource                            |
+|------------------------------------------------------------------|
+| + new pageSource($originsource: DataSource, $fastobjectsource: FastObjectSource) |
+| + isValid() : boolean                                            |
+| + getTimestamp() : integer                                       |
+| + read() : mixed                                                 |
+| + write($data: mixed) : void                                     |
+| + unlink() : void                                                |
+|------------------------------------------------------------------|
+|------------------------------------------------------------------|
+@End_UML_Box */
+
+class pageSource extends DataSource
+{
+  protected $originsource = null;
+  protected $fastobjectsource = null;
+  protected $loaded = false;
+
+  private $tm1;
+  private $tm2;
+
+  public function __construct($originsource, $fastobjectsource)
+  {
+    parent::__construct(null);
+
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("include/datasources/pageSource->__construct($originsource, $fastobjectsource)", WADebug::SYSTEM);
+    $this->originsource = $originsource;
+    $this->fastobjectsource = $fastobjectsource;
+  }
+
+  public function isValid()
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug('include/datasources/pageSource->isValid()', WADebug::SYSTEM);
+
+    $this->tm1 = $this->originsource->getTimeStamp();
+    $this->tm2 = $this->fastobjectsource->getTimeStamp();
+
+    // true if the afo in shared memory is OK
+    return ($this->tm1 && $this->tm2 && $this->tm1 <= $this->tm2);
+  }
+
+  public function getTimeStamp()
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("include/datasources/pageSource->getTimeStamp()", WADebug::SYSTEM);
+    return $this->fastobjectsource->getTimeStamp();
+  }
+
+  public function write($data)
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("include/datasources/pageSource->write($data)", WADebug::SYSTEM);
+
+    parent::write($data);
+    $this->fastobjectsource->write($data);
+
+//    $this->originsource->write($data);
+    $this->loaded = true;
+  }
+
+  public function read()
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug('include/datasources/pageSource->read()', WADebug::SYSTEM);
+
+    // datasource exists ?      
+    if (!$this->originsource->isValid())
+    {
+      $this->fastobjectsource->unlink();
+      parent::unlink();
+      return null;
+    }
+
+    if ($this->isValid() && $this->loaded)
+      return $this->data;
+
+    // we sinchronize
+    // origin source is new, we recalculate all the chain
+    if ($this->tm1 > $this->tm2)
+    {
+      parent::write(new XBPage($this->originsource->read()));
+      $this->fastobjectsource->write($this->data);
+    }
+    elseif ($this->tm2 > $this->timestamp)
+    {
+      parent::write($this->fastobjectsource->read());
+    }
+    $this->loaded = true;
+    return $this->data;
+  }
+
+  // destroy anything
+  public function unlink()
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug('include/datasource/pageSource->unlink()', WADebug::SYSTEM);
+    $this->originsource->unlink();
+    $this->fastobjectsource->unlink();
+    parent::unlink();
+  }
+
+}
+
+?>

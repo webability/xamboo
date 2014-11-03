@@ -1,0 +1,739 @@
+<?php
+
+/*
+    WATemplate.lib, DomCore, the WebAbility(r) Core System
+    Contains the basic class to compile an HTML/XML Template file to a PHP array/object
+    (c) 2008-2012 Philippe Thomassigny
+
+    This file is part of DomCore
+
+    DomCore is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    DomCore is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* @UML_Box
+|------------------------------------------------------------------|
+| WATemplate: Template compiler                                    |
+|------------------------------------------------------------------|
+| - $template: string                                              |
+| - $metaelements: array                                           |
+| - $subtemplate: array                                            |
+| - $meta: boolean                                                 |
+| - $elements: array                                               |
+|------------------------------------------------------------------|
+| + new WATemplate($data: mixed)                                   |
+| + addFatherTemplates($tmp: array(WATemplate): void               |
+| + getTemplate($id: string): WATemplate                           |
+| + getTemplates(): array                                          |
+| + getClone(): WATemplate                                         |
+| - getElements($elements, $entry): mixed                          |
+| + metaElements($elements: array, $reverse: boolean, $strict: boolean): void|
+| + addElement($element: string, $value: string, $reverse: boolean): void|
+| + addElements($elements: array, $reverse: boolean, $strict: boolean): void|
+| + resolve(): string                                              |
+| - dumpelements($elements: array, $level: int, $value: string): string|
+| - createkey(): string                                            |
+| - compile($data: string, $interprete: boolean): void             |
+| - separateSubTemplate($text: string, $itemnumber: int, $ID: string, $calcsubtemplates: boolean): array|
+| - getPath($data): mixed                                          |
+| - getPathLast($data): mixed                                      |
+| - getMetaElements($data): array                                  |
+| # serial($data: array): void                                     |
+| # unserial($data: array): void                                   |
+| + __toString(): string                                           |
+|------------------------------------------------------------------|
+@End_UML_Box */
+
+// class to compile and keep a Template string
+/* A template is:
+
+   %-- comments --%
+   xml/html code
+   %%SUBTEMPLATE(id)%%
+     xml/html code
+     %%SUBTEMPLATE(id)%%
+     xml/html code indented
+     %%ENDSUBTEMPLATE%%
+     xml/html code
+   %%ENDSUBTEMPLATE%%
+
+   Meta elements:
+   ??xx??   if/then/else
+   @@xx@@   loops
+   &&xx&&   references
+   !!xx!!   debug
+
+*/
+// Template keywords __XX__
+
+
+class WATemplate extends WAClass
+{
+  private $template = '';
+  private $metaelements = array();
+  private $subtemplates = array();
+  private $meta = false;
+
+  private $elements = array();
+
+  public function __construct($data)
+  {
+    parent::__construct();
+
+    if (is_string($data))
+    {
+      $this->compile($data);
+    }
+    else if (WATemplate::is_usable($data))
+    {
+      if (isset($data['template']) && is_string($data['template']))
+        $this->template = $data['template'];
+      if (isset($data['metaelements']) && WATemplate::is_usable($data['metaelements']))
+        $this->metaelements = $data['metaelements'];
+      if (isset($data['subtemplates']) && WATemplate::is_usable($data['subtemplates']))
+        $this->subtemplates = $data['subtemplates'];
+    }
+  }
+
+  public function addFatherTemplates($templates)
+  {
+    foreach($templates as $key => $data)
+    {
+      if (!isset($this->subtemplates[$key]))
+        $this->subtemplates[$key] = $data;
+    }
+  }
+
+  public function getTemplate($name = null)
+  {
+    if ($name === null)
+      return $this->template;
+    if (!isset($this->subtemplates[$name]))
+      return null;
+    if (is_string($this->subtemplates[$name]))
+    {
+      $tmp = $this->subtemplates[$this->subtemplates[$name]]->getClone();
+      $tmp->addFatherTemplates($this->subtemplates);
+      return $tmp;
+    }
+    $tmp = $this->subtemplates[$name]->getClone();
+    $tmp->addFatherTemplates($this->subtemplates);
+    return $tmp;
+  }
+
+  public function getTemplates()
+  {
+    return $this->subtemplates;
+  }
+
+
+  public function getClone()
+  {
+    $subt = array();
+    foreach($this->subtemplates as $id => $st)
+    {
+      if ($st instanceof WATemplate)
+        $subt[$id] = $st->getClone();
+      else
+        $subt[$id] = $st;
+    }
+    return new WATemplate(array('template' => $this->template, 'metaelements' => $this->metaelements, 'subtemplates' => $subt));
+  }
+
+  private function getElements($elements, $entry, $onlyentry = false)
+  {
+    if (!WATemplate::is_usable($elements))
+      return null;
+    if (WATemplate::is_usable($entry))
+    {
+      $allelements = null;
+      foreach($entry as $el)
+      {
+        $el = trim($el);
+        if (!isset($elements[$el]))
+          return null;
+        if (!$onlyentry)
+        {
+          if (!$allelements)
+            $allelements = $elements[$el];
+          else
+          {
+            if (WATemplate::is_usable($elements[$el]))
+              foreach($elements[$el] as $k => $e)
+                $allelements[$k] = $e;
+          }
+        }
+        $elements = $elements[$el];
+      }
+      if (!$onlyentry)
+        return $allelements;
+      else
+        return $elements;
+    }
+    elseif (isset($elements[$entry]))
+      return $elements[$entry];
+    return null;
+  }
+
+  public function metaElements($elements, $reverse = false, $strict = true)
+  {
+    if ($this->meta)
+      return;
+//      throw new CoreError('Error: the metaElements method can be called only once.');
+    $this->meta = true;
+
+    foreach($this->metaelements as $e)
+    {
+      $done = false;
+      $kval = $val = '';
+      if ($e[0] == '!') // it's a DEBUG ELEMENT
+      {
+        $kval = $e[1];
+        if ($e[2] == 'dump')
+        {
+          $tmp = $this->dumpelements($elements, 0, true);
+        }
+        if ($e[2] == 'list')
+        {
+          $tmp = $this->dumpelements($elements, 0, false);
+        }
+        $val = $tmp;
+      }
+      if ($e[0] == '{') // it's a SIMPLE ELEMENT
+      {
+        $kval = $e[1];
+        $entry = $e[2];
+        $localelements = $this->getElements($elements, $entry, true);
+        $this->elements[$kval] = array($localelements);
+        $done = true;
+      }
+      if ($e[0] == '&') // it's a SIMPLE SUBTEMPLATE
+      {
+        $kval = $e[1];
+        $entry = $e[2];
+        $id = $e[3];
+        $val = $this->getTemplate($id);
+        $localelements = $this->getElements($elements, $entry);
+        if ($val && $localelements)
+          $val->metaElements(WATemplate::merge_objects($elements, WATemplate::is_usable($localelements)?$localelements:array()), $reverse, $strict);
+        elseif ($val)
+          $val->metaElements($elements, $reverse, $strict);
+      }
+      if ($e[0] == '@') // it's a LOOP
+      {
+        $kval = $e[1];
+        $entry = $e[2];
+        $id = $e[3];
+        $check = isset($e[4])?$e[4]:null;
+        $localelements = $this->getElements($elements, $entry);
+        if (!$localelements || !WATemplate::is_usable($localelements) || sizeof($localelements) == 0)
+        {
+          $val = $this->getTemplate($id.'.none');
+          if ($val)
+            $val->metaElements($elements, $reverse, $strict);
+        }
+        else
+        {
+          $alt = false;
+          $num = 1;
+          foreach($localelements as $key => $values)
+          {
+            $tmp = $this->getTemplate($id.'.key.'.$key);
+            if (!$tmp && isset($values[$check]))
+              $tmp = $this->getTemplate($id.'.sel.'.$values[$check]);
+            if (!$tmp && $num == 1)
+              $tmp = $this->getTemplate($id.'.first');
+            if (!$tmp && WATemplate::is_countable($localelements) && $num == count($localelements))
+              $tmp = $this->getTemplate($id.'.last');
+            if (!$tmp)
+              $tmp = $this->getTemplate($id.'.num.'.$num);
+            if (!$tmp && $alt)
+              $tmp = $this->getTemplate($id.'.loopalt');
+            if (!$tmp)
+              $tmp = $this->getTemplate($id.'.loop');
+            if (!$tmp)
+              $tmp = $this->getTemplate($id);
+            if ($tmp)
+            {
+              $tmp->metaElements(WATemplate::merge_objects($elements, WATemplate::is_usable($values)?$values:array()), $reverse, $strict);
+              if (!isset($this->elements[$kval]))
+                $this->elements[$kval] = array();
+              if ($reverse)
+                array_unshift($this->elements[$kval], $tmp);
+              else
+                $this->elements[$kval][] = $tmp;
+            }
+            $alt = !$alt;
+            $num ++;
+          }
+          $done = true;
+        }
+      }
+      elseif ($e[0] == '?') // it's a IF/CASE/NONE
+      {
+        $kval = $e[1];
+        $entry = $e[2];
+        $id = $e[3];
+        $check = isset($e[4])?$e[4]:null;
+        $localelements = $this->getElements($elements, $entry);
+        $checkvalue = $check?(isset($localelements[$check])?$localelements[$check]:null):(WATemplate::is_usable($localelements, true)?$localelements:null);
+        if (!$checkvalue)
+          $tmp = $this->getTemplate($id.'.none');
+        else
+          $tmp = $this->getTemplate($id.'.'.$checkvalue);
+        if (!$tmp)
+          $tmp = $this->getTemplate($id);
+        if ($tmp && $localelements)
+          $tmp->metaElements(WATemplate::merge_objects($elements, WATemplate::is_usable($localelements)?$localelements:array()), $reverse, $strict);
+        elseif ($tmp)
+          $tmp->metaElements($elements, $reverse, $strict);
+        $val = $tmp;
+      }
+      if (!$done)
+      {
+        if (!isset($this->elements[$kval]))
+          $this->elements[$kval] = array();
+        if ($reverse)
+          array_unshift($this->elements[$kval], $val);
+        else
+          $this->elements[$kval][] = $val;
+      }
+    }
+    if ($strict)
+      return;
+
+    if (!$elements || !WATemplate::is_usable($elements))
+      return;
+    foreach($elements as $k => $e)
+    {
+      if (WATemplate::is_usable($e)) // we only want normal values. arrays and objects are interpreted in another way
+        continue;
+      if (!isset($this->elements[$k]))
+        $this->elements[$k] = array();
+      if ($reverse)
+        array_unshift($this->elements[$k], $e);
+      else
+        $this->elements[$k][] = $e;
+    }
+  }
+
+  public function addElement($element, $value, $reverse = false)
+  {
+    if (!$this->elements)
+      $this->elements = array();
+    if (!WATemplate::is_usable($element))
+    {
+      $element = array($element);
+      $value = array($value);
+    }
+    foreach($element as $k => $e)
+    {
+      if (!isset($this->elements[$e]))
+        $this->elements[$e] = array();
+      if ($reverse)
+      {
+        if (WATemplate::is_usable($value[$k]))
+          foreach($value[$k] as $v)
+            array_unshift($this->elements[$e], $v);
+        else
+          array_unshift($this->elements[$e], $value[$k]);
+      }
+      else
+      {
+        if (WATemplate::is_usable($value[$k]))
+          foreach($value[$k] as $v)
+            $this->elements[$e][] = $v;
+        else
+          $this->elements[$e][] = $value[$k];
+      }
+    }
+  }
+
+  public function addElements($elements, $reverse = false, $strict = false)
+  {
+    $this->metaElements($elements, $reverse, $strict);
+  }
+
+  public function resolve()
+  {
+    $temp = $this->template;
+    // 1. parse the elements values
+    if (!$this->elements)
+      return $temp;
+    $elementstmp = array();
+    $elementstxt = array();
+
+    foreach ($this->elements as $k => $el)
+    {
+      $value1 = "";
+      $hastemplate = false;
+      foreach ($el as $k1 => $el1)
+      {
+        if ($el1 instanceof WATemplate)
+        {
+          $value1 .= $el1->resolve();
+          $hastemplate = true;
+        }
+        else
+          $value1 .= $el1;
+      }
+      if ($hastemplate)
+        $elementstmp[$k] = $value1;
+      else
+        $elementstxt[$k] = $value1;
+    }
+
+    // PASS 1: RESOLVE ALL SUB TEMPLATES
+    $regin = array();
+    $regout = array();
+    foreach ($elementstmp as $k => $v)
+    {
+      $regin[] = $k;
+      $regout[] = $v;
+    }
+    $temp = str_replace($regin, $regout, $temp);
+
+    // PASS 2: REPLACE ALL TEXT
+    $regin = array();
+    $regout = array();
+    foreach ($elementstxt as $k => $v)
+    {
+      $regin[] = $k;
+      $regout[] = $v;
+    }
+    $temp = str_replace($regin, $regout, $temp);
+    return $temp;
+  }
+
+
+  // ===================== PRIVATE COMPILER ==============================
+  // meta element !! to dump the variables
+  private function dumpelements($elements, $level, $value = false)
+  {
+    $txt = '';
+    if (WATemplate::is_usable($elements))
+    {
+      foreach($elements as $k => $v)
+      {
+        $txt .= str_repeat('&nbsp;&nbsp;', $level) . substr($k, 0, 1).'<span></span>'.substr($k, 1);
+        if ($value)
+        {
+          $txt .= ' :: ';
+          if (WATemplate::is_usable($v))
+          {
+            $txt .= "<br />";
+            $txt .= $this->dumpelements($v, $level + 1, $value);
+          }
+          else if (is_object($v))
+            $txt .= "{Object}<br />";
+          else
+            $txt .= "$v<br />";
+        }
+        else
+        {
+          $txt .= "<br />";
+          if (WATemplate::is_usable($v))
+            $txt .= $this->dumpelements($v, $level + 1, $value);
+        }
+      }
+    }
+    return $txt;
+  }
+
+
+  // ===================== PRIVATE COMPILER ==============================
+  // 8 a-z random key
+  private function createkey()
+  {
+    srand((double)microtime()*1000000);
+    $key = '';
+    for ($i=0;$i<8;$i++)
+      $key .= chr(65+rand()%26);
+    return $key;
+  }
+
+  private function compile($data, $interprete = true)
+  {
+    if ($interprete)
+    {
+      // ------------------------
+      // First remove all the comments
+      $elem = array();
+
+      $regelement = '/%--(.*?)--%'.
+                    '/s';
+      preg_match_all($regelement, $data, $resultelement);
+      if (!empty($resultelement[0]))
+      {
+        reset($resultelement);
+        foreach($resultelement[0] as $k => $E)
+        {
+          // we ignore the comments
+          $pos = strpos($data, $E);
+          $data = substr_replace($data, '', $pos, strlen($E));
+        }
+      }
+
+      // Generate a unique key for our template
+      $badkey = '1';
+      while ($badkey)
+      {
+        $ID = $this->createkey();
+        // check that key IS NOT INCLUDED into the template to avoid duplicate problems
+        $badkey = strstr($data, $ID);
+      }
+
+      // Parse the sub templates
+      $reg = '/%%(SUBTEMPLATE)\(([\d\w\.\|_-]+?)\)%%(\r){0,1}(\n){0,1}(.*?)%%ENDSUBTEMPLATE%%(\r){0,1}(\n){0,1}|\[(\[)([\d\w\.\|_-]+?)\]\](\r){0,1}(\n){0,1}(.*?)\[\[\]\](\r){0,1}(\n){0,1}/sD';
+      $regin = '/%%(SUBTEMPLATE)\(([\d\w\.\|_-]+?)\)%%(\r){0,1}(\n){0,1}(.*?)$|\[(\[)([\d\w\.\|_-]+?)\]\](\r){0,1}(\n){0,1}(.*?)$/sD';
+
+      $loop = true;
+      $subt = array();
+      $itemnumber = 1;
+      while($loop)
+      {
+        unset($result);
+        preg_match_all($reg, $data, $result);
+        if(!empty($result[0]))
+        {
+          foreach($result[0] as $k => $E)
+          {
+            if ($result[1][$k])
+            {
+              $resultin = $result[5][$k];
+              $resultout = $result[0][$k];
+              $resulttemp = $result[2][$k];
+            }
+            else
+            {
+              $resultin = $result[12][$k];
+              $resultout = $result[0][$k];
+              $resulttemp = $result[9][$k];
+            }
+            $loopin = true;
+            while ($loopin)
+            {
+              unset($subresult);
+              preg_match($regin, $resultin, $subresult);
+              if (!empty($subresult[0]))
+              { // there are nested %%SUTEMP
+                if ($subresult[1])
+                {
+                  $resultin = $subresult[5];
+                  $resultout = $subresult[0];
+                  $resulttemp = $subresult[2];
+                }
+                else
+                {
+                  $resultin = $subresult[10];
+                  $resultout = $subresult[0];
+                  $resulttemp = $subresult[7];
+                }
+              }
+              else
+                $loopin = false;
+            }
+            if($result[1][$k] && $result[5][$k] != $resultin)
+            {
+              $resultout .= '%%ENDSUBTEMPLATE%%';
+            }
+            elseif($result[8][$k] && $result[12][$k] != $resultin)
+            {
+              $resultout .= '[[]]';
+            }
+            $pos = strpos($data, $resultout);
+            $data = substr_replace($data, '___'.$ID.$itemnumber.'___', $pos, strlen($resultout));
+
+            $subt[$itemnumber++] = array($resulttemp, $resultin);
+          }
+        }
+        else
+          $loop = false;
+      }
+      $data = $data;
+
+      $tmp = $this->separateSubTemplate($data, $itemnumber, $ID, $subt);
+      $this->template = $tmp['template'];
+      $this->subtemplates = $tmp['subtemplates'];
+      $this->metaelements = $this->getMetaElements($tmp['template']);
+    }
+    else
+    {
+      $this->template = $data;
+      $this->subtemplates = array();
+      $this->metaelements = $this->getMetaElements($data);
+    }
+  }
+
+  private function separateSubTemplate($text, $itemnumber, $ID, $calcsubtemplates)
+  {
+    $subtemplates = array();
+    for ($i = 1; $i < $itemnumber; $i++)
+    {
+      if (strstr($text, '___'.$ID.$i.'___'))
+      {
+        // 1. Search of subtemplates of this one
+        $subt = $this->separateSubTemplate($calcsubtemplates[$i][1], $itemnumber, $ID, $calcsubtemplates);
+        // 2. replace text
+        $pos = strpos($text, '___'.$ID.$i.'___');
+        $text = substr_replace($text, '', $pos, strlen('___'.$ID.$i.'___'));
+        // 3. create Template object
+        if (strpos($calcsubtemplates[$i][0], '|') !== false) // various subtemplates in the ID
+        {
+          $ids = explode('|', $calcsubtemplates[$i][0]);
+          $firstid = null;
+          foreach($ids as $id)
+          {
+            if (trim($id) == '')
+              continue;
+            if (!$firstid)
+            {
+              $firstid = $id;
+              $subtemplates[$id] = new WATemplate($subt);
+            }
+            else
+            {
+              $subtemplates[$id] = $firstid;
+            }
+          }
+        }
+        else
+          $subtemplates[$calcsubtemplates[$i][0]] = new WATemplate($subt);
+      }
+    }
+    $template = array(
+      'template' => $text,
+      'subtemplates' => $subtemplates,
+      'metaelements' => $this->getMetaElements($text)
+    );
+    return $template;
+  }
+
+  private function getPath($data)
+  {
+    if (strpos($data, '>') === false)
+      return $data;
+    $xdata = explode('>', $data);
+    return $xdata;
+  }
+
+  private function getPathLast($data)
+  {
+    if (strpos($data, '>') === false)
+      return $data;
+    $xdata = explode('>', $data);
+    return array_pop($xdata);
+  }
+
+  private function getMetaElements($data)
+  {
+    // separate meta elements
+    $regelement = '/'.
+                  '&(&)(\S*?)&&|'.         // meta element &&xx&&
+                  '@(@)(\S*?)@@|'.         // meta element @@xx@@
+                  '\?(\?)(\S*?)\?\?|'.     // meta element ??xx??
+                  '\{(\{)(\S*?)\}\}|'.     // meta element {{xx}}
+                  '\!(\!)(\S*?)\!\!'.      // meta element !!xx!! debug
+                  '/s';
+    preg_match_all($regelement, $data, $resultelement);
+
+    $metaelements = array();
+    if (!empty($resultelement[0]))
+    {
+      reset($resultelement);
+      foreach($resultelement[0] as $k => $E)
+      {
+        if ($resultelement[2][$k])
+        {
+          $xme = explode(':', $resultelement[2][$k]);
+          if (!isset($xme[1]))
+            $xme[1] = $xme[0];
+          $metaelements[] = array($resultelement[1][$k], $resultelement[0][$k], $this->getPath($xme[0]), $this->getPathLast($xme[1]));
+        }
+        elseif ($resultelement[4][$k])
+        {
+          $xme = explode(':', $resultelement[4][$k]);
+          if (!isset($xme[1]))
+            $xme[1] = $xme[0];
+          if (!isset($xme[2]))
+            $xme[2] = null;
+          $metaelements[] = array($resultelement[3][$k], $resultelement[0][$k], $this->getPath($xme[0]), $this->getPathLast($xme[1]), $xme[2]);
+        }
+        elseif ($resultelement[6][$k])
+        {
+          $xme = explode(':', $resultelement[6][$k]);
+          if (!isset($xme[1]))
+            $xme[1] = $xme[0];
+          if (!isset($xme[2]))
+            $xme[2] = null;
+          $metaelements[] = array($resultelement[5][$k], $resultelement[0][$k], $this->getPath($xme[0]), $this->getPathLast($xme[1]), $xme[2]);
+        }
+        elseif ($resultelement[8][$k])
+        {
+          $xme = $resultelement[8][$k];
+          $metaelements[] = array($resultelement[7][$k], $resultelement[0][$k], $this->getPath($xme));
+        }
+        elseif ($resultelement[10][$k])
+        {
+          $xme = $resultelement[10][$k];
+          $metaelements[] = array($resultelement[9][$k], $resultelement[0][$k], $xme);
+        }
+      }
+    }
+    return $metaelements;
+  }
+
+  static public function is_usable($data, $all = false)
+  {
+    // objects are always traversable over public properties, anything that implement Traversable too, and arrays too
+    // if all is true, accept also values
+    return is_array($data) || ($data instanceof Traversable && $data instanceof ArrayAccess) || ($all && $data);
+  }
+
+  static public function is_countable($data)
+  {
+    return $data instanceof Countable || is_array($data);
+  }
+
+  static public function merge_objects($data1, $data2)
+  {
+    $result = array();
+    foreach($data1 as $k => $v)
+      $result[$k] = $v;
+    foreach($data2 as $k => $v)
+      $result[$k] = $v;
+    return $result;
+  }
+
+  protected function serial(&$data)
+  {
+    $data['template'] = $this->template;
+    $data['metaelements'] = $this->metaelements;
+    $data['subtemplates'] = $this->subtemplates;
+  }
+
+  protected function unserial($data)
+  {
+    $this->template = $data['template'];
+    $this->metaelements = $data['metaelements'];
+    $this->subtemplates = $data['subtemplates'];
+  }
+
+  public function __toString()
+  {
+    return $this->resolve();
+  }
+
+}
+
+?>

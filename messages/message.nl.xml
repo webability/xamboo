@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language id="message" lang="nl">
+<!-- Messages from DomCore -->
+  <entry id="WAMessage.notfound"><![CDATA[Fout: er is geen bericht met ID:]]></entry>
+  <entry id="WAObject.badget"><![CDATA[Fout: het lees-attribuut bestaat niet:]]></entry>
+  <entry id="WAObject.badset"><![CDATA[Fout: het schrijf-attribuut bestaat niet:]]></entry>
+  <entry id="WAObject.badcall"><![CDATA[Fout: de aangeroepen method bestaat niet:]]></entry>
+  <entry id="WAClass.serial"><![CDATA[Fout: u moet uw eigen serial() method declareren.]]></entry>
+  <entry id="WAClass.unserial"><![CDATA[Fout: u moet uw eigen unserial() method declareren.]]></entry>
+  <entry id="WAFile.mkdirproblem"><![CDATA[Fout: de map kon niet worden aangemaakt:]]></entry>
+  <entry id="WAFile.unknownfile"><![CDATA[Fout: het bestand is niet herkend:]]></entry>
+  <entry id="WAFile.baddir"><![CDATA[Fout: het pad naar recursief te verwijderen data is niet in overeenstemming:]]></entry>
+  <entry id="WASHM.nosharedmemory"><![CDATA[Fout: Er is geen gedeelde geheugenruimte beschikbaar.]]></entry>
+  <entry id="WASHM.noattach"><![CDATA[Fout: Onze gedeelde geheugenruimte kon niet worden gekoppeld.]]></entry>
+  <entry id="FileSource.fileerror"><![CDATA[Fout: Het bestand kon niet worden geopend voor schrijfacties:&nbsp;]]></entry>
+  <entry id="Singleton.nocore"><![CDATA[Fout: de singleton bestaat al en kan niet worden gekloond:&nbsp;]]></entry>
+  <entry id="Multiton.nocore"><![CDATA[Fout: de multiton bestaat al en kan niet worden gekloond:&nbsp;]]></entry>
+<!-- End Messages from DomCore -->
+</language>
