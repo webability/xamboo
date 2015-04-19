@@ -15,7 +15,11 @@ include_once "../include/__autoload.lib";
 $URI = $QUERY = $BASE_P = $base = null;
 
 // we create the base object with very basic config parameters
-$base = new Base(array('REPOSITORYDIR' => '../repository/', 'PAGESDIR' => '../repository/', 'PAGESCONTAINER' => 'pages/', 'CACHE1DIR' => '../repository/', 'CACHE2DIR' => '../repository/'));
+$base = new Base(array(
+  'REPOSITORYDIR' => '../repository/',
+  'PAGESDIR' => '../repository/',
+  'PAGESCONTAINER' => 'pages/'
+));
 WAMessage::setMessagesFile('../messages/message.'.$base->Language.'.xml');
   
 if (isset($_SERVER['REQUEST_URI']))
