@@ -23,7 +23,7 @@
 
 /* @UML_Box -- Do not edit
 |------------------------------------------------------------------|
-| codeSource : code 4-levels access object                 |
+| codeSource : code 4-levels access object                         |
 |------------------------------------------------------------------|
 | # originsource : DataSource extended object                      |
 | # fastobjectsource : FastObjectSource extended object            |

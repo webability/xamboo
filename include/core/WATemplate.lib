@@ -249,7 +249,7 @@ class WATemplate extends WAClass
           foreach($localelements as $key => $values)
           {
             $tmp = $this->getTemplate($id.'.key.'.$key);
-            if (!$tmp && isset($values[$check]))
+            if (!$tmp && (is_array($values) || $values instanceof ArrayAccess) && isset($values[$check]))
               $tmp = $this->getTemplate($id.'.sel.'.$values[$check]);
             if (!$tmp && $num == 1)
               $tmp = $this->getTemplate($id.'.first');

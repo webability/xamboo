@@ -160,6 +160,26 @@ class WAFile
       closedir($dd);
       rmdir($dir);
     }
+    else
+    {
+      // any subpattern (must have * at the end) 
+      $dd = glob($dir);
+      // gets the dir root of the pattern
+      $xdir = explode('/', $dir);
+      array_pop($xdir);
+      $rootdir = implode('/', $xdir);
+      foreach($dd as $file)
+      {
+        if($file == '.' || $file == '..')
+          continue;
+        if (is_dir($file))
+        {
+          WAFile::deleteAll($file, $reConstraint);
+        }
+        elseif (is_file($file))
+          unlink($file);
+      }
+    }
     return true;
   }
 

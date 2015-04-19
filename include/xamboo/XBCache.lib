@@ -1,0 +1,76 @@
+<?php
+
+/*
+    XBCache.lib, Xamboo
+    Contains the basic class to contains a page object instance
+    (c) 2012 Philippe Thomassigny
+
+    This file is part of Xamboo
+
+    Xamboo is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Xamboo is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* @UML_Box
+|------------------------------------------------------------------|
+| XBCache: page object                                              |
+|------------------------------------------------------------------|
+| # id: string                                                     |
+| # lang: boolean                                                  |
+| # entries: Array(id => string)                                   |
+|------------------------------------------------------------------|
+| + new XBCache($data, $id = null, $lang = null)                    |
+| + getId(): string                                                |
+| + getLang(): string                                              |
+| + getEntry($id: string): string                                  |
+| + delEntry($id: string): void                                    |
+| + setEntry($id: string, $data: string): void                     |
+| # serial($data: array): void                                     |
+| # unserial($data: array): void                                   |
+| + __toString(): string                                           |
+|------------------------------------------------------------------|
+@End_UML_Box */
+
+/*
+  2012-09-23 creación libreria
+  2012-09-24 Phil: agregue el soporte para comentarios en el compilador con '#'
+  2012-09-24 Phil: agregue el soporte para array, iterator y countable
+*/
+
+// Class to manage a page object
+class XBCache extends WAClass
+{
+  public function __construct($data)
+  {
+    parent::__construct();
+    $this->data = $data;
+  }
+
+  protected function serial(&$data)
+  {
+    $data['data'] = $this->data;
+  }
+
+  protected function unserial($data)
+  {
+    $this->data = $data['data'];
+  }
+
+  public function __toString()
+  {
+    return XBCache::create($this->entries);
+  }  
+
+}
+
+?>

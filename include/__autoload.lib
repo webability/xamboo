@@ -25,7 +25,7 @@ function __autoload($classname)
 {
   $dirs = array(
     './',
-    '../include/common/',
+    '../include/xamboo/',
     '../include/core/',
     '../include/patterns/',
     '../include/datasources/',
