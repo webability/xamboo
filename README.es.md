@@ -64,6 +64,7 @@ Descomprimir xamboo en /var:
 Copiar los 2 archivos index.php y .htaccess en la carpeta pública del web
 Estan en xamboo/site
 
+Edite el archivo index.php. Al principio del archivo, hay 3 directorios 
 
 
 
