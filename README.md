@@ -2,20 +2,27 @@
 
 Xamboo v1
 =============================
-This is the build 003
+This is the build 004
 
 Manual
 =======================
 
 Please refer to README.es.md for manual in spanish.
 
-== English manual is under construction ==
+== English manual is not available yet ==
 
 
 
 
 Version Changes Control
 =======================
+
+Build 004 - 2014-04-21
+-----------------------
+> Uses CORE 1.01.16
+- Removed not usefull code, clean not used libraries
+- Added comments and headers of code
+- Spanish basic manual added
 
 Build 003 - 2014-04-18
 -----------------------
