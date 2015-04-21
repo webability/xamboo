@@ -8,10 +8,7 @@ Manual
 =======================
 
 Please refer to README.es.md for manual in spanish.
-
-== English manual is not available yet ==
-
-
+Please refer to README.en.md for manual in english.
 
 
 Version Changes Control
