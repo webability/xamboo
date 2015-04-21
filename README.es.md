@@ -1,11 +1,7 @@
 @UTF-8
 
-Xamboo v1
-=======================
-This is the build 003
-
-Manual
-=======================
+Xamboo v1 - Manual básico
+=========================
 
 Introducción:
 -----------------------
