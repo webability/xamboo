@@ -15,10 +15,10 @@ include_once "../include/__autoload.lib";
 $URI = $QUERY = $BASE_P = $base = null;
 
 // we create the base object with very basic config parameters
+// Only 2 parameters are absolutly necesary: PAGESDIR.
 $base = new Base(array(
-  'REPOSITORYDIR' => '../repository/',
-  'PAGESDIR' => '../repository/',
-  'PAGESCONTAINER' => 'pages/'
+  /* La ruta de donde se encuentran las páginas */
+  'PAGESDIR' => '../repository/'
 ));
 WAMessage::setMessagesFile('../messages/message.'.$base->Language.'.xml');
   

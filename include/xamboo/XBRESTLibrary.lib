@@ -1,35 +1,37 @@
 <?php
 
 /*
-    XBRESTLibrary.lib, Xamboo
-    Contains the basic class to contains a REST page object instance
-    (c) 2012 Philippe Thomassigny
+XBRESTLibrary.lib, Xamboo
+Contains the basic class to contains a REST page object instance
+(c) 2012 Philippe Thomassigny
 
-    This file is part of Xamboo
+This file is part of Xamboo
 
-    Xamboo is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Xamboo is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    Xamboo is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+Xamboo is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
+
+Creation: 2012-09-23
+Changes:
+  2015-04-21 Phil: documentation, comments
+
 */
 
 /* @UML_Box
 |------------------------------------------------------------------|
-| XBLibrary: page object                                           |
+| XBRESTLibrary: REST library object                               |
 |------------------------------------------------------------------|
-| # id: string                                                     |
-| # lang: boolean                                                  |
-| # entries: Array(id => string)                                   |
 |------------------------------------------------------------------|
-| + new XBLibrary($template, $language)                            |
+| + new XBRESTLibrary($template, $language)                        |
 | + __toString(): string                                           |
 |------------------------------------------------------------------|
 @End_UML_Box */
