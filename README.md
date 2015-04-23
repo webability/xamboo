@@ -1,8 +1,8 @@
 @UTF-8
 
-Xamboo v1
+Xamboo v2
 =============================
-This is the build 004
+This is the build 001
 
 Manual
 =======================
@@ -13,6 +13,13 @@ Please refer to README.en.md for manual in english.
 
 Version Changes Control
 =======================
+
+V2 Build 001 - 2014-04-22
+-----------------------
+> Uses CORE 1.01.17
+- Most of libraries renamed to XB...
+- Added support for new types of pages registering them into the engine
+- Added automatic history of changes of code, instances, pages, templates, languages
 
 Build 004 - 2014-04-21
 -----------------------
