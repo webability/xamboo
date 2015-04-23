@@ -1,32 +1,37 @@
 <?php
 
-/*
-    LanguageSource.lib, DomCore, the WebAbility(r) Core System
-    Contains the language 3-level cache access object
-    (c) 2008-2012 Philippe Thomassigny
+/* @DESCR -- Do not edit
 
-    This file is part of DomCore
+XBCodeSource.lib, Xamboo
+Library to read, compile and use a code page (aka simple page)
+(c) 2015 Philippe Thomassigny
 
-    DomCore is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This file is part of Xamboo
 
-    DomCore is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+Xamboo is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    You should have received a copy of the GNU General Public License
-    along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+Xamboo is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    Changes:
-      2015-04-21 Phil, fastobjectsource is now optional
-*/
+You should have received a copy of the GNU General Public License
+along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
+
+Creation: 2012-09-23
+Changes:
+  2015-04-21 Phil: documentation, comments
+  2015-04-21 Phil: included the support for CACHE1 config parameter, and fastobjectsource is now optional
+  2015-04-21 Phil: Library renamed and history support added
+
+@End_DESCR */
 
 /* @UML_Box -- Do not edit
 |------------------------------------------------------------------|
-| LanguageSource : Language 3-level access object                  |
+| codeSource : code 4-levels access object                         |
 |------------------------------------------------------------------|
 | # originsource : DataSource extended object                      |
 | # fastobjectsource : FastObjectSource extended object            |
@@ -34,7 +39,7 @@
 | - tm1 : timestamp of originsource                                |
 | - tm2 : timestamp of fastobjectsource                            |
 |------------------------------------------------------------------|
-| + new LanguageSource($originsource: DataSource, $fastobjectsource: FastObjectSource) |
+| + new codeSource($originsource: DataSource, $fastobjectsource: FastObjectSource) |
 | + isValid() : boolean                                            |
 | + getTimestamp() : integer                                       |
 | + read() : mixed                                                 |
@@ -44,48 +49,50 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class LanguageSource extends DataSource
+class XBCodeSource extends DataSource
 {
   protected $originsource = null;
   protected $fastobjectsource = null;
+  protected $historysource = null;
   protected $loaded = false;
 
-  protected $tm1;
-  protected $tm2;
+  private $tm1;
+  private $tm2;
 
-  public function __construct($originsource, $fastobjectsource = null)
+  public function __construct($originsource, $fastobjectsource = null, $historysource = null)
   {
     parent::__construct(null);
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/LanguageSource->__construct($originsource, $fastobjectsource)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/codeSource->__construct($originsource, $fastobjectsource)", WADebug::SYSTEM);
     $this->originsource = $originsource;
     $this->fastobjectsource = $fastobjectsource;
+    $this->historysource = $historysource;
   }
 
   public function isValid()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/LanguageSource->isValid()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/codeSource->isValid()', WADebug::SYSTEM);
 
     $this->tm1 = $this->originsource->getTimeStamp();
     $this->tm2 = $this->fastobjectsource?$this->fastobjectsource->getTimeStamp():0;
 
-    // true if anything has good time
+    // true if the afo in shared memory is OK
     return ($this->tm1 && $this->tm2 && $this->tm1 <= $this->tm2);
   }
 
   public function getTimeStamp()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/LanguageSource->getTimeStamp()', WADebug::SYSTEM);
+      $this->doDebug("include/datasources/codeSource->getTimeStamp()", WADebug::SYSTEM);
     return $this->fastobjectsource?$this->fastobjectsource->getTimeStamp():0;
   }
 
   public function write($data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/LanguageSource->write($data)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/codeSource->write($data)", WADebug::SYSTEM);
 
     $this->originsource->write($data);
     if ($this->fastobjectsource)
@@ -98,7 +105,7 @@ class LanguageSource extends DataSource
   public function read()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/LanguageSource->read()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/codeSource->read()', WADebug::SYSTEM);
 
     // datasource exists ?      
     if (!$this->originsource->isValid())
@@ -116,7 +123,7 @@ class LanguageSource extends DataSource
     // origin source is new, we recalculate all the chain
     if ($this->tm1 > $this->tm2)
     {
-      parent::write(new WALanguage($this->originsource->read()));
+      parent::write(new XBCode($this->originsource->read()));
       if ($this->fastobjectsource)
         $this->fastobjectsource->write($this->data);
     }
@@ -125,14 +132,29 @@ class LanguageSource extends DataSource
       parent::write($this->fastobjectsource->read());
     }
     $this->loaded = true;
+    
+    // We check against history, if origin is newer than history
+    if ($this->historysource && $this->historysource->getTimeStamp() < $this->tm1)
+    {
+      // read the source and write to history
+      $this->makeHistory();
+    }
+    
     return $this->data;
   }
 
+  public function makeHistory()
+  {
+    $this->historysource->write(microtime(true));
+    $f = new FileSource($this->base->HISTORYDIR, $this->historysource->getPath(), $this->historysource->getFilename() . '.' . time(), true);
+    $f->write($this->originsource->read());
+  }
+  
   // destroy anything
   public function unlink()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasource/LanguageSource->unlink()', WADebug::SYSTEM);
+      $this->doDebug('include/datasource/codeSource->unlink()', WADebug::SYSTEM);
     $this->originsource->unlink();
     if ($this->fastobjectsource)
       $this->fastobjectsource->unlink();

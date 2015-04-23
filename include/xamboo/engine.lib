@@ -32,6 +32,7 @@ Changes:
   2014-07-08 Phil: I added error resolution with page and block. All errors are now in english
   2014-07-09 Phil: I added parted template [[CONTENT,blockid]] with multipart pages (only from library for now)
   2015-04-21 Phil: documentation, comments
+  2015-04-22 Phil: Added declaration of 4 basic types of pages and the posibility to add new types
 
 @End_DESCR */
 
@@ -45,13 +46,35 @@ Changes:
 
 class engine extends WAClass
 {
-  const VERSION = '1.00.04';
+  const VERSION = '2.00.01';
 
   public $URI = '';
   public $maincontext;
   public $currentcontext;
   public $historycontext = array();
-  
+  public $pagetypes = array(
+      'simple' => array(
+          'type' => 'server',
+          'server' => 'XBCodeServer',
+          'run' => true
+        ),
+      'library' => array(
+          'type' => 'library',
+          'language' => true,
+          'template' => true
+        ),
+      'template' => array(
+          'type' => 'server',
+          'server' => 'XBTemplateServer',
+          'run' => false
+        ),
+      'language' => array(
+          'type' => 'server',
+          'server' => 'XBLanguageServer',
+          'run' => false
+        ),
+    );
+ 
   public function __construct($URI = '')
   {
     parent::__construct();
@@ -62,6 +85,11 @@ class engine extends WAClass
     $this->URI = $URI;
   }
 
+  public function registerPageType($type, $definition)
+  {
+    $this->pagetypes['$type'] = $definition;
+  }
+  
   // $P is the page id, $context is null for main page call, 1 for inner pages (blocks), 2 for outer pages (templates)
   // main page call sets the main_context in the engine class
   // params have the full path in array when it is main page, and build params for any other block
@@ -81,7 +109,7 @@ class engine extends WAClass
     while (true)
     {
       // page MUST exist and be available
-      $page = PageServer::getInstance($P)->read();
+      $page = XBPageServer::getInstance($P)->read();
       if ($this->isAvailable($page, $context))
         break;
       if (strlen($P) > 1 && strrpos($P, '/') !== false)
@@ -151,7 +179,7 @@ class engine extends WAClass
     $instance = null;
     foreach($identities as $id => $data)
     {
-      $instance = InstanceServer::getInstance($P.$id)->read();
+      $instance = XBInstanceServer::getInstance($P.$id)->read();
       if ($instance)
       {
         $version = $data['version'];
@@ -190,7 +218,7 @@ class engine extends WAClass
       {
         // calculate cache ID
         $cacheid = $this->getCacheID($instance->cachevariables);
-        $cache = CacheServer::getInstance($cacheid)->read();
+        $cache = XBCacheServer::getInstance($cacheid)->read();
         // check cache rules
 // *** MISSING
         // (time outs, vars, rules)
@@ -232,97 +260,70 @@ class engine extends WAClass
     }
 
     $text = '';
-    // Upon Page->type we will call the correct resolver/sub-engines
-//**********************************************
-//**********************************************
-//**********************************************
-
-    // code, template, language, library MAY not exist and depends on page type
-    if ($page->type == 'simple')
+    if (isset($this->pagetypes[$page->type]))
     {
       $code = null;
-      foreach($identities as $id => $data)
+      if ($this->pagetypes[$page->type]['type'] == 'server')
       {
-        $code = CodeServer::getInstance($P.$id)->read();
-        if ($code) break;
+        $server = $this->pagetypes[$page->type]['server'];
+        foreach($identities as $id => $data)
+        {
+          $code = $server::getInstance($P.$id)->read();
+          if ($code) break;
+        }
+        if ($code)
+        {
+          if ($this->pagetypes[$page->type]['run'])
+            $text = $code->run($this, $params, $method);
+          else
+            $text = $code;
+        }
+        else
+        {
+          $this->popcontext();
+          return $this->launchError($context, $P, 'Error: the page '.$P.' has no code', 'Error: the block '.$P.' has no code');
+        }
       }
-      if ($code)
-        $text = $code->run($this, $params);
-      else
+      elseif ($this->pagetypes[$page->type]['type'] == 'library')
       {
-        $this->popcontext();
-        return $this->launchError($context, $P, 'Error: the page '.$P.' has no code', 'Error: the block '.$P.' has no code');
+        $template = $language = null;
+        if ($this->pagetypes[$page->type]['template'])
+        {
+          foreach($identities as $id => $data)
+          {
+            $template = XBTemplateServer::getInstance($P.$id)->read();
+            if ($template) break;
+          }
+        }
+        if ($this->pagetypes[$page->type]['language'])
+        {
+          foreach($identities as $id => $data)
+          {
+            $language = XBLanguageServer::getInstance($P.$id)->read();
+            if ($language) break;
+          }
+        }
+
+        $uid = (strpos($P, '/') !== false)?substr($P, strrpos($P, '/')+1):$P;
+        if (!is_file($this->base->PAGESDIR.$this->base->PAGESCONTAINER."$P/$uid.lib"))
+        {
+          $this->popcontext();
+          return $this->launchError($context, $P, 'Error: the page '.$P.' has no library PHP code: '."$P/$uid.lib", 'Error: the block '.$P.' has no library PHP code: '."$P/$uid.lib");
+        }
+        include_once $this->base->PAGESDIR.$this->base->PAGESCONTAINER."$P/$uid.lib";
+        $libname = str_replace(array('-'), '_', $uid);
+        $pagelib = new $libname($template, $language);
+        $text = $pagelib->run($this, $params, $method);
       }
     }
 
-    if ($page->type == 'box')
-    {
-      $code = null;
-      foreach($identities as $id => $data)
-      {
-        $code = BoxServer::getInstance($P.$id)->read();
-        if ($code) break;
-      }
-      if ($code)
-        $text = $code->run($this, $params);
-      else
-      {
-        $this->popcontext();
-        return $this->launchError($context, $P, 'Error: the page '.$P.' has no box code', 'Error: the block '.$P.' has no box code');
-      }
-    }
-
-    $template = null;
-    if ($page->type == 'template' || $page->type == 'library')
-    {
-      foreach($identities as $id => $data)
-      {
-        $template = TemplateServer::getInstance($P.$id)->read();
-        if ($template) break;
-      }
-    }
-    if ($page->type == 'template')
-    {
-      $this->popcontext();
-      return $template;
-    }
-      
-    $language = null;
-    if ($page->type == 'language' || $page->type == 'library')
-    {
-      foreach($identities as $id => $data)
-      {
-        $language = LanguageServer::getInstance($P.$id)->read();
-        if ($language) break;
-      }
-    }
-    if ($page->type == 'language')
-    {
-      $this->popcontext();
-      return $language;
-    }
-
-    if ($page->type == 'library')
-    {
-      $uid = (strpos($P, '/') !== false)?substr($P, strrpos($P, '/')+1):$P;
-      if (!is_file($this->base->PAGESDIR.$this->base->PAGESCONTAINER."$P/$uid.lib"))
-      {
-        $this->popcontext();
-        return $this->launchError($context, $P, 'Error: the page '.$P.' has no library PHP code: '."$P/$uid.lib", 'Error: the block '.$P.' has no library PHP code: '."$P/$uid.lib");
-      }
-      include_once $this->base->PAGESDIR.$this->base->PAGESCONTAINER."$P/$uid.lib";
-      $libname = str_replace(array('-'), '_', $uid);
-      $pagelib = new $libname($template, $language);
-      $text = $pagelib->run($this, $params, $method);
-    }
 
     // we cache only if it is 200 response on main page, or always (block)
     if ($this->base->CACHE2 && ($instance->cache == 'yes' && !$exclude && (($this->base->HTTPResponse->getResponseCode() == 200 && $context === null) || $context)))
     {
       // calculate cache ID
       $cacheid = $this->getCacheID($instance->cachevariables);
-            
-      $cache = CacheServer::getInstance($cacheid)->write(array('data' => $text, 'response' => $this->base->HTTPResponse->save(), 'context' => serialize($this->currentcontext), 'maincontext' => serialize($this->maincontext)));
+      $cache = XBCacheServer::getInstance($cacheid)->write(array('data' => $text, 'response' => $this->base->HTTPResponse->save(), 'context' => serialize($this->currentcontext), 'maincontext' => serialize($this->maincontext)));
     }
 
     // check templates and get templates
@@ -344,7 +345,7 @@ class engine extends WAClass
     {
       // calculate cache ID
       $cacheid = $this->getCacheID($instance->cachevariables);
-      $cache = CacheServer::getInstance($cacheid)->write(array('data' => $text, 'response' => $this->base->HTTPResponse->save(), 'context' => serialize($this->currentcontext), 'maincontext' => serialize($this->maincontext)));
+      $cache = XBCacheServer::getInstance($cacheid)->write(array('data' => $text, 'response' => $this->base->HTTPResponse->save(), 'context' => serialize($this->currentcontext), 'maincontext' => serialize($this->maincontext)));
     }
 
     $this->popcontext();

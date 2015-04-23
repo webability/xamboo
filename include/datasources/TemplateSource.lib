@@ -50,8 +50,8 @@ class TemplateSource extends DataSource
   protected $fastobjectsource = null;
   protected $loaded = false;
 
-  private $tm1;
-  private $tm2;
+  protected $tm1;
+  protected $tm2;
 
   public function __construct($originsource, $fastobjectsource = null)
   {
