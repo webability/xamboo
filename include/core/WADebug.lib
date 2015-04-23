@@ -80,7 +80,7 @@
 class WADebug
 {
   // DomCore version
-  const VERSION = '1.01.16';
+  const VERSION = '1.01.17';
 
   // All the functions entry
   const SYSTEM = 1;

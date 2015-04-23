@@ -22,6 +22,7 @@
 
     Changes:
       2015-04-21 Phil, fastobjectsource is now optional
+      2015-04-22 Phil, tm1 and tm2 are now protected
 */
 
 /* @UML_Box -- Do not edit
