@@ -64,7 +64,7 @@ class WASHM extends WADebug
     parent::__construct();
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->__construct( $size, $memid )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->__construct(%, %)", WADebug::SYSTEM, $size, $memid);
 
     if (!function_exists('sem_get'))
       throw new SHMError(WAMessage::getMessage('WASHM.nosharedmemory'));
@@ -139,7 +139,7 @@ class WASHM extends WADebug
   public function write($id, $data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->write( $id, $data )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->write(%, %)", WADebug::SYSTEM, $id, $data);
 
     $this->attach();
     $link = $this->getlink($id, 'w');
@@ -160,7 +160,7 @@ class WASHM extends WADebug
   public function read($id)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->read( $id )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->read(%)", WADebug::SYSTEM, $id);
 
     $this->attach();
     $var = null;
@@ -176,7 +176,7 @@ class WASHM extends WADebug
   public function delete($id)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->delete( $id )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->delete(%)", WADebug::SYSTEM, $id);
 
     $this->attach();
     $link = $this->getlink($id, 'd');
@@ -188,7 +188,7 @@ class WASHM extends WADebug
   public function lastread($id)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->lastread( $id )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->lastread(%)", WADebug::SYSTEM, $id);
 
     $this->attach();
     $link = $this->getlink($id, null);
@@ -201,7 +201,7 @@ class WASHM extends WADebug
   public function lastwrite($id)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->lastwrite( $id )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->lastwrite(%)", WADebug::SYSTEM, $id);
 
     $this->attach();
     $link = $this->getlink($id, null);
@@ -224,7 +224,7 @@ class WASHM extends WADebug
   public function __isset($id)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WASHM->__isset( $name )", WADebug::SYSTEM);
+      $this->doDebug("include/core/WASHM->__isset(%)", WADebug::SYSTEM, $name);
 
     $this->attach();
     $link = $this->getlink($id, null);

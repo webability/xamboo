@@ -37,7 +37,7 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class Base_Engine extends Singleton
+class Base_Engine extends WABase
 {
   public $PAGESDIR;        // directory of pages of the instance
   public $PAGESCONTAINER;  // directory of pages of the instance}
@@ -71,10 +71,9 @@ class Base_Engine extends Singleton
   public function __construct($config)
   {
     parent::__construct();
-    WAObject::setBase($this);
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("common/base/Base_Engine->__construct($config)", WADebug::SYSTEM);
+      $this->doDebug("xamboo/Base_Engine->__construct(%)", WADebug::SYSTEM, $config);
     
     // if $config is not an array but a string, we parse it
     if (!is_array($config) && is_string($config))

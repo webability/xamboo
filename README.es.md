@@ -1,6 +1,6 @@
 @UTF-8
 
-Xamboo v1 - Manual básico
+Xamboo v2 - Manual básico
 =========================
 
 Introducción:
@@ -19,7 +19,7 @@ Los ejemplos armados vienen en HTML 5 con Javascript y CSS3.
 
 Xamboo no necesita una base de datos para manejar toda la estructura del framework, lo que lo hace extremadamente veloz, fácil de uso y poderoso.
 
-Xamboo funciona actualmente sobre sitios distribuyendo más de 30 millones de páginas web mensualmente, sirve sitios normales, y GRAPH-APIs/REST-APIs a APP de mobiles.
+Xamboo funciona actualmente sobre sitios distribuyendo más de **30 millones de páginas web mensualmente**, sirve sitios normales, y GRAPH-APIs/REST-APIs a APP de mobiles.
 
 
 Requerimientos:

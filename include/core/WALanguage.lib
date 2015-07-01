@@ -92,7 +92,7 @@ class WALanguage extends WAClass implements Iterator
   public function setEntry($id, $data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WALanguage->setEntry($id, $data)", WADebug::SYSTEM);
+      $this->doDebug("include/core/WALanguage->setEntry(%, %)", WADebug::SYSTEM, $id, $data);
 
     $this->entries[$id] = $data;
   }
@@ -101,7 +101,7 @@ class WALanguage extends WAClass implements Iterator
   public function delEntry($id)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/core/WALanguage->delEntry($id)", WADebug::SYSTEM);
+      $this->doDebug("include/core/WALanguage->delEntry(%)", WADebug::SYSTEM, $id);
 
     if (isset($this->entries[$id]))
     {

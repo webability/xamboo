@@ -52,7 +52,9 @@ class HTTPResponse extends WAClass
   public function __construct()
   {
     parent::__construct();
-    $this->doDebug("common/HTTPResponse->__construct()", WADebug::SYSTEM);
+
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPResponse->__construct()", WADebug::SYSTEM);
   }
 
   public function setResponseCode($code)

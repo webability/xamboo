@@ -46,7 +46,7 @@ Changes:
 
 class engine extends WAClass
 {
-  const VERSION = '2.00.01';
+  const VERSION = '2.0.3';
 
   public $URI = '';
   public $maincontext;
@@ -80,7 +80,7 @@ class engine extends WAClass
     parent::__construct();
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("common/engine->__construct()", WADebug::SYSTEM);
+      $this->doDebug("xamboo/engine->__construct(%)", WADebug::SYSTEM, $URI);
       
     $this->URI = $URI;
   }
@@ -96,7 +96,7 @@ class engine extends WAClass
   public function run($P, $context = null, $params = null, $version = null, $language = null, $method = null)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("common/engine->run($P, $context, $params)", WADebug::SYSTEM);
+      $this->doDebug("xamboo/engine->run(%, %, %)", WADebug::SYSTEM, $P, $context, $params);
 
     if (!$P)
       $P = $this->base->mainpage;

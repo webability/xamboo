@@ -35,7 +35,7 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class CacheServer extends Multiton
+class XBCacheServer extends Multiton
 {
   private $cache;
 

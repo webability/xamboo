@@ -49,7 +49,7 @@ class XBLibrary extends WAObject
     $this->language = $language;
   }
 
-  public function run($engine)
+  public function run($engine, $params)
   {
     if ($this->template instanceof WATemplate)
       return $this->template->resolve();

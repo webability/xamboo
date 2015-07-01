@@ -73,6 +73,7 @@ class WAObject extends WADebug
   // DEBUG FUNCTIONS
   public function explain($indent = 0, $ignore = array())
   {
+    // we ignore base and ibase when we explain the object.
     return parent::explain($indent, array('base', 'ibase'));
   }
 

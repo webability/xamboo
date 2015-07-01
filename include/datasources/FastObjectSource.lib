@@ -56,7 +56,7 @@ class FastObjectSource extends DataSource
   {
     parent::__construct(null);
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/FastObjectSource->__construct($datasource, $shmsource)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/FastObjectSource->__construct(%, %)", WADebug::SYSTEM, $datasource, $shmsource);
 
     $this->datasource = $datasource;
     $this->shmsource = $shmsource;
@@ -87,7 +87,7 @@ class FastObjectSource extends DataSource
   public function write($data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/FastObjectSource->write($data)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/FastObjectSource->write(%)", WADebug::SYSTEM, $data);
 
     $this->datasource->write(serialize($data));
     if($this->shmsource)

@@ -2,7 +2,7 @@
 
 Xamboo v2
 =============================
-This is the build 001
+This is the build 003
 
 Manual
 =======================
@@ -14,7 +14,17 @@ Please refer to README.en.md for manual in english.
 Version Changes Control
 =======================
 
-V2 Build 001 - 2014-04-22
+V2 Build 003 - 2015-06-17
+-----------------------
+> Uses CORE 2.0.1
+- added PUTDATA in HTTPRequest, to be able to access the data sent by a PUT command into the body, if it not a JSON string
+
+V2 Build 002 - 2015-06-11
+-----------------------
+> Uses CORE 2.0.1
+- The base_engine object now uses the WABase library from domcore
+
+V2 Build 001 - 2014-05-03
 -----------------------
 > Uses CORE 1.01.17
 - Most of libraries renamed to XB...

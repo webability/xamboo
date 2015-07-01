@@ -26,6 +26,7 @@ Changes:
   2014-12-01: Phil, added IP, HOST to track server on load balancer.
   2015-03-10: Phil, added METHOD to use with the REST API
   2015-04-21: Phil, documentation, comments
+  2015-06-17: Phil, added PUTDATA to be able to access the data sent by a PUT command into the body, if it not a JSON string
 
 @End_DESCR */
 
@@ -48,11 +49,14 @@ class HTTPRequest extends WAClass
   public $IP = null;
   public $HOST = null;
   public $METHOD = null;
+  public $PUTDATA = null;
 
   public function __construct()
   {
     parent::__construct();
-    $this->doDebug("common/HTTPRequest->__construct()", WADebug::SYSTEM);
+    
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPRequest->__construct()", WADebug::SYSTEM);
 
     $this->_GET = $_GET;
     $this->_POST = $_POST;
@@ -78,9 +82,9 @@ class HTTPRequest extends WAClass
     $this->METHOD = strtoupper($_SERVER['REQUEST_METHOD']);
     if ($this->METHOD == 'PUT')
     {
-      $putdata=file_get_contents('php://input');
-      if ($putdata)
-        $this->_POST = @json_decode($putdata, true);
+      $this->PUTDATA=file_get_contents('php://input');
+      if ($this->PUTDATA)
+        $this->_POST = @json_decode($this->PUTDATA, true);
     }
   }
 
@@ -107,10 +111,12 @@ class HTTPRequest extends WAClass
   // ====================================================================
   // Parameters link
   // ====================================================================
+  // the the variable for the user, first check POST (PRIORITY) then GET
+  // if the variable doesnt exists, returns NULL
   public function getParameter($P, $Type = Validator::ALL, $Query = null, $NotNull = false)
-  { // the the variable for the user, first check POST (PRIORITY) then GET
-    // if the variable doesnt exists, returns NULL
-    $this->doDebug("common/HTTPRequest->getParameter($P, $Type, $Query, $NotNull)", WADebug::SYSTEM);
+  {
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPRequest->getParameter(%, %, %, %)", WADebug::SYSTEM, $P, $Type, $Query, $NotNull);
 
     if (isset($this->_POST[$P]))
     {
@@ -140,7 +146,8 @@ class HTTPRequest extends WAClass
 
   public function getParameterGet($P, $Type = Validator::ALL, $Query = null, $NotNull = false)
   {
-    $this->doDebug("common/HTTPRequest->getParameterGet($P, $Type, $Query, $NotNull)", WADebug::SYSTEM);
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPRequest->getParameterGet(%, %, %, %)", WADebug::SYSTEM, $P, $Type, $Query, $NotNull);
 
     // return the value of the GET variable exclusively
     if (isset($this->_GET[$P]))
@@ -160,7 +167,8 @@ class HTTPRequest extends WAClass
 
   public function getParameterPost($P, $Type = Validator::ALL, $Query = null, $NotNull = false)
   {
-    $this->doDebug("common/HTTPRequest->getParameterPost($P, $Type, $Query, $NotNull)", WADebug::SYSTEM);
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPRequest->getParameterPost(%, %, %, %)", WADebug::SYSTEM, $P, $Type, $Query, $NotNull);
 
     // return the value of the POST variable exclusively
     if (isset($this->_POST[$P]))
@@ -175,7 +183,8 @@ class HTTPRequest extends WAClass
 
   public function getParameterEncrypted($P, $Type = Validator::ALL, $Query = null, $NotNull = false)
   {
-    $this->doDebug("common/HTTPRequest->getParameterEncrypted($P, $Type, $Query, $NotNull)", WADebug::SYSTEM);
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPRequest->getParameterEncrypted(%, %, %, %)", WADebug::SYSTEM, $P, $Type, $Query, $NotNull);
 
     // return the value of the Encrypted variable exclusively
     if (isset($this->_EURL[$P]))
@@ -190,7 +199,8 @@ class HTTPRequest extends WAClass
 
   public function getCookie($C)
   {
-    $this->doDebug("common/HTTPRequest->getCookie($C)", WADebug::SYSTEM);
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("xamboo/HTTPRequest->getCookie(%)", WADebug::SYSTEM, $C);
 
     // return the value of the cookie
     if (isset($this->_COOKIE[$C]))
@@ -203,7 +213,8 @@ class HTTPRequest extends WAClass
 
   public function decodeQueryString($str, $sep1 = "&", $sep2 = "=")
   {
-    $this->doDebug("common/HTTPRequest->decodeQueryString($str)", WADebug::SYSTEM);
+    if (self::$debug || $this->localdebug)
+      $this->doDebug("common/HTTPRequest->decodeQueryString(%)", WADebug::SYSTEM, $str);
 
     $str = trim($str);
     if (!$str)
