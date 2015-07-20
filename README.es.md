@@ -285,41 +285,36 @@ Ejemplos:
 /datos/datos.ver.es.code                código de la instancia de la página, versión ver
 
 
+Tipos de páginas vs archivos necesarios:
+=========================================
 
+Una página "sencilla" necesita:
+- un archivo .page
+- un archivo .instance
+- un archivo .code
 
-Archivo de definición .page
------------------------------
+Una página "libreria" necesita:
+- un archivo .page
+- un archivo .instance
+- un archivo .template, opcional
+- un archivo .language, opcional
+- un archivo .lib
 
-El archivo .page es una colección de parámetros, uno por línea con la sintaxis siguiente:
-Parámetro=valor
+Una página "template" necesita:
+- un archivo .page
+- un archivo .instance
+- un archivo .template
 
-El sistema reconoce por defecto 5 parámetros en este archivo:
-- type:  es el tipo de página. Obligatorio. Puede tener los valores siguientes:
-o simple: es una página sencilla, basada en un código a despachar agregado del meta-lenguaje del Xamboo
-o library: es una clase PHP que despachará el código calculado. La librería tiene que llamarse igual que la página y extender XBLibrary
-o template: es una plantilla basada en el sistema de plantillas WATemplate del DomCore
-o language: es una tabla de idiomas basada en el sistema de internacionalización WALanguage del DomCore
-o box: es una definición XML de Box Model con sus librerías respectivas
-o redirect: redirecciona la pagina hasta la pagina con el código especificado (301 0 302) formato: 301,liga o 302,liga
+Una página "language" necesita:
+- un archivo .page
+- un archivo .instance
+- un archivo .language
 
-- status:  es el estatus de la página. Obligatorio. Puede tener los valores siguientes:
-o hidden: pase lo que pase, el código contenido en esta página es ignorado como si no existiera
-o published: el código contenido en esta página es visible directamente desde el exterior, o sea accesible por solicitud directa desde la URI
-o block: el código es accesible, pero únicamente por llamadas internas del Xamboo, desde otra página o desde el código
-
-- template: es la plantilla a usar alrededor de esta página. Opcional. Usa la ruta relativa de la plantilla en el repositorio de páginas, sin el / inicial. La plantilla debe de contener la palabra clave [[CONTENT]] en donde esta página se incluirá.
-
-- defaultversion: es la versión por defecto de la instancia de la página. Opcional. La instancia con esta versión tiene que existir.
-
-- defaultlanguage: es el idioma por defecto de la instancia de la página. Opcional. La instancia con este idioma tiene que existir.
-
-Además de estos 5 parámetros reconocidos por el framework, el programador puede agregar tantos parámetros extras como necesita, estos serán almacenados y distribuidos al código de la página para cualquier necesidad, e incluso consultables por otras páginas por código y/o meta-lenguaje.
-
-Nota: no es recomendable poner parámetros que contengan textos para enviar al cliente en este archivo, ya que la definición de la página es independiente del idioma. Para los textos se recomienda agregar los parámetros en el archivo de definición de la instancia, que sí es sensible al idioma.
-
+Una página "redirect" necesita:
+- un archivo .page
 
 Resolución de instancias:
--------------------------
+=========================
 
 Una vez que el sistema encuentra la página indicada, buscará la instancia de esta página más conveniente.
 ***** NOTA DEL PROGRAMADOR: Se necesita poder pasar versión e idioma forzado por URI para efectos de depuración; VERIFICAR COMO Y DONDE *****
@@ -339,18 +334,58 @@ La instancia con el idioma por defecto y la versión por defecto tiene que existi
 El sistema sabe que la instancia existe si y solamente si existe un archivo llamado 
 [nombre-de-la-pagina].[version].[idioma].instance
 
-El idioma son las 2 letras oficiales de la norma ISO 339 – idiomas, por ejemplo es para español, en para inglés y fr para francés
+El idioma son las 2 letras oficiales de la norma ISO 339 – idiomas, por ejemplo 'es' para español, 'en' para inglés y 'fr' para francés.
+
+
+
+Referencia de archivos para las páginas:
+========================================
+
+Archivo de definición .page
+-----------------------------
+
+El archivo .page es una colección de parámetros, uno por línea con la sintaxis siguiente:
+Parámetro=valor
+
+El sistema reconoce por defecto 6 parámetros en este archivo:
+- type:  es el tipo de página. Obligatorio. Puede tener los valores siguientes:
+o simple: es una página sencilla, basada en un código a despachar agregado del meta-lenguaje del Xamboo
+o library: es una clase PHP que despachará el código calculado. La librería tiene que llamarse igual que la página y extender XBLibrary
+o template: es una plantilla basada en el sistema de plantillas WATemplate del DomCore
+o language: es una tabla de idiomas basada en el sistema de internacionalización WALanguage del DomCore
+o box: es una definición XML de Box Model con sus librerías respectivas
+o redirect: redirecciona la pagina hasta la pagina con el código especificado (301 0 302) formato: 301,liga o 302,liga
+
+- status:  es el estatus de la página. Obligatorio. Puede tener los valores siguientes:
+o hidden: pase lo que pase, el código contenido en esta página es ignorado como si no existiera
+o published: el código contenido en esta página es visible directamente desde el exterior, o sea accesible por solicitud directa desde la URI
+o block: el código es accesible, pero únicamente por llamadas internas del Xamboo, desde otra página o desde el código
+
+- template: es la plantilla a usar alrededor de esta página. Opcional. Usa la ruta relativa de la plantilla en el repositorio de páginas, sin el / inicial. La plantilla debe de contener la palabra clave [[CONTENT]] en donde esta página se incluirá.
+
+- defaultversion: es la versión por defecto de la instancia de la página. Opcional. La instancia con esta versión tiene que existir.
+
+- defaultlanguage: es el idioma por defecto de la instancia de la página. Opcional. La instancia con este idioma tiene que existir.
+
+- redirect: es la linea de redirect si el tipo es redirect.
+formato: 301,liga o 302,liga
+
+Además de estos 6 parámetros reconocidos por el framework, el programador puede agregar tantos parámetros extras como necesita, estos serán almacenados y distribuidos al código de la página para cualquier necesidad, e incluso consultables por otras páginas por código y/o meta-lenguaje.
+
+Nota: no es recomendable poner parámetros que contengan textos para enviar al cliente en este archivo, ya que la definición de la página es independiente del idioma. Para los textos se recomienda agregar los parámetros en el archivo de definición de la instancia, que sí es sensible al idioma.
 
 
 Archivo de definición .instance
 --------------------------------
 
 El archivo .instance tiene el formato siguiente:
-[nombre-de-la-pagina].[versión].[idioma].instance
-nombre-de-la-pagina tiene que ser el mismo que la carpeta en la cual se encuentra
-versión es el nombre de la versión de esta instancia
-idioma es el identificador del idioma en formato ISO-339
-El conjunto [version.idioma] es opcional.
+[nombre-de-la-pagina].[skin].[versión].[idioma].instance
+
+nombre-de-la-pagina tiene que ser el mismo que la carpeta en la cual se encuentra.
+versión es el nombre de la versión de esta instancia.
+idioma es el identificador del idioma en formato ISO-339.
+El parámetro [skin] es opcional y se ignora siempre si no usa skins.
+El conjunto [version.idioma] es opcional y se ignora la mayor parte de las veces si no usa un sitio multi-versión o multi-idioma.
 
 El archivo .instance es una colección de parámetros, uno por línea con la sintaxis siguiente:
 Parámetro=valor
@@ -368,25 +403,84 @@ Archivo contenedor de código .code
 -----------------------------------
 
 El archivo .code tiene el formato siguiente:
-[nombre-de-la-pagina].[versión].[idioma].code
-nombre-de-la-pagina tiene que ser el mismo que la carpeta en la cual se encuentra
-versión es el nombre de la versión de esta instancia
-idioma es el identificador del idioma en formato ISO-339
+[nombre-de-la-pagina].[skin].[versión].[idioma].code
+
+nombre-de-la-pagina tiene que ser el mismo que la carpeta en la cual se encuentra.
+versión es el nombre de la versión de esta instancia.
+idioma es el identificador del idioma en formato ISO-339.
+El parámetro [skin] es opcional y se ignora siempre si no usa skins.
 El conjunto [version.idioma] es opcional.
 
 El archivo .code es una mezcla del código a despachar con las palabras clave del meta-lenguaje.
 Favor de consultar el manual del meta-lenguaje para saber como usarlo
 
 
-
 Archivo .lib
 -------------
+
+El archivo .lib tiene el formato siguiente:
+[nombre-de-la-pagina].lib
+
+Las páginas dinamicas de Xamboo se basan en varias clases pre-definidas en el core de la herramienta. Puede además extender sus propias clases para fines propios, como por ejemplo una clase para páginas exclusivas con usuario conectado (ver ejemplos después).
+
+XBLibrary: clase base para cualquier libreria para despachar una página dinámica a través de un sitio WEB normal. Implementa el único método run, llamado cuando se llama una página normal.
+
+XBRESTLibrary: clase base para cualquier libreria para despachar una página dinámica a través de una REST-API. Implementa los 4 métodos base get, put, post, delete.
+
+Ejemplo:
+
+Página home:
+En la carpeta /home:
+/home/home.lib contiene:
+<?php
+class home extends XBLibrary
+{
+  function __construct($template, $language)
+  {
+    parent::__construct($template, $language)
+  }
+  
+  function run($engine, $params)
+  {
+    return "Hello, world";
+  }
+}
+?>
 
 Archivo .template
 ------------------
 
+El archivo .template tiene el formato siguiente:
+[nombre-de-la-pagina].[skin].[versión].[idioma].template
+
+nombre-de-la-pagina tiene que ser el mismo que la carpeta en la cual se encuentra.
+versión es el nombre de la versión de esta instancia.
+idioma es el identificador del idioma en formato ISO-339.
+El parámetro [skin] es opcional y se ignora siempre si no usa skins.
+El conjunto [version.idioma] es opcional.
+
+El archivo .template es una mezcla del código a despachar con las palabras clave de una plantilla.
+
+Xamboo usa el sistema de plantillas de DomCore.
+Las plantillas usan un set de metapalabras que estan descritas en sus propios manuales que puede consultar en http://www.webability.info/?P=documentacion&wiki=/DomCore .
+
+
 Archivo .language
 ------------------
+
+El archivo .language tiene el formato siguiente:
+[nombre-de-la-pagina].[skin].[versión].[idioma].template
+
+nombre-de-la-pagina tiene que ser el mismo que la carpeta en la cual se encuentra.
+versión es el nombre de la versión de esta instancia.
+idioma es el identificador del idioma en formato ISO-339.
+El parámetro [skin] es opcional y se ignora siempre si no usa skins.
+El conjunto [version.idioma] es opcional.
+
+El archivo .language es un archivo de tipo XML.
+
+Xamboo usa el sistema de idiomas de DomCore.
+Los idiomas usan un archivos XML que esta descrito en sus propios manuales que puede consultar en http://www.webability.info/?P=documentacion&wiki=/DomCore .
 
 
 Compilación y caches
@@ -394,10 +488,23 @@ Compilación y caches
 
 Todo el código del framework es compilado y cacheado en varios niveles, DE MANERA AUTOMATICA, el usuario no necesita administrar estos caches.
 
+El administrador tiene acceso a la configuración de cómo se deben de comportar los cachés según los varios parámetros de la configuración, desde dónde se deben de almacenar, hasta si deben o no calcularse y guardarse, con opción a variantes por variables de URL, etc.
 
 
 Objeto Base
 ------------
+
+El objeto base es accesible desde cualquier lugar del código PHP:
+- En todas las clases, viene implícito en $this->base
+- En el código integrado en páginas .code con '[[PHP...PHP]]' viene accesible directamente como $base.
+  
+Engine
+-------
+
+El engine es accesible desde cualquier punto de entrada en el código del usuario:
+- En las clases, viene como parámetro en el llamado de run, get, post, put, delete.
+- En el código integrado en páginas .code con '[[PHP...PHP]]' viene accesible directamente como $engine.
+
 
 Referencia de clases
 =====================
@@ -410,15 +517,73 @@ XBRESTLibrary
 
 Etc
 
+Meta lenguaje
+==============
+
+Las meta palabras del meta lenguaje de Xamboo son:
+
+%-- Comentarios --%
+
+[[PARAM0]] hasta [[PARAM99]]
+acceso a parametro de llamada 0 hasta 99. Caso de parametros llamados por [[BLOCK ...]]
+
+[[PARAM,nombre]]
+acceso a parametro nombrado. Caso de parametros llamados por [[CALL ...]]
+
+[[PAGEPARAM,nombre]]
+Llama un parámetro dentro del archivo .page de la página llamada por la URL.
+
+[[LOCALPAGEPARAM,nombre]]
+Llama un parámetro dentro del archivo .page de la página local.
+
+[[INSTANCEPARAM,nombre]]
+Llama un parámetro dentro del archivo .instance de la página llamada por la URL.
+
+[[LOCALINSTANCEPARAM,nombre]]
+Llama un parámetro dentro del archivo .instance de la página local.
+
+[[VAR,nombre]]
+Llama una variable de la URL, por GET o POST.
+
+[[JS,ruta]]
+Almacena el archivo JS para agregar al header de esta página en cálculo.
+
+[[CSS,ruta]]
+Almacena el archivo CSS para agregar al header de esta página en cálculo.
+
+[[PHP,cache: ... PHP]]
+Snippet de PHP integrado en esta página
+
+[[BLOCK,ruta: ... ]]
+Llama otra página para integrarla en este lugar. Los parámetros vienen uno por linea y son numerados de 0 a x.
+
+[[CALL,ruta: ... ]]
+Llama otra página para integrarla en este lugar. Los parámetros son nombrados nombre=valor, uno por linea.
 
 
 
+Meta lenguaje todavía por implementar:
+--------------------------------------
 
+[[WIDGETS]]
+Las sub-páginas se integran automaticamente como subbloques en orden 
+** not yet implemented **
 
+[[WIDGETS,ruta]]
+Las sub-paginas de la ruta especificada se integran automaticamente como subbloques en orden 
+** not yet implemented **
 
+[[LINK,liga]]
+Genera una URL sobre el framework
+** not yet implemented **
 
+[[SYSPARAM,nombre]]
+Llama un parámetro del sistema (en la configuración)
+** not yet implemented **
 
-
+[[CLIENTPARAM,nombre]]
+Llama un parámetro del usuario conectado (extención no implementada)
+** not yet implemented **
 
 
 

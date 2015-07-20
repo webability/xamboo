@@ -2,17 +2,26 @@
 
 Xamboo v2
 =============================
-This is the build 003
+This is the build 004
 
-Manual
+Manuals
 =======================
 
-Please refer to README.es.md for manual in spanish.
-Please refer to README.en.md for manual in english.
+Please refer to README.es.md for manual in spanish. (recommended to watch it as plain text)
+Please refer to README.en.md for manual in english. (recommended to watch it as plain text)
 
+If you want to help converting the manual from text into .md file, you are most welcome.
+Translations are also welcome.
 
 Version Changes Control
 =======================
+
+V2 Build 004 - 2015-07-19
+-----------------------
+> Uses CORE 2.0.1
+- Added all the default parameters into index.php of site and restsite for examples
+- The metaword 'PARAM' has been slightly modified so it works also for simple pages CALLs, a new syntax has been added: [[PARAM,name]] (it was only working for library CALLs)
+- Manuals are more complete.
 
 V2 Build 003 - 2015-06-17
 -----------------------

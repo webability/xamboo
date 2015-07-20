@@ -23,6 +23,7 @@ along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
 
 Creation: 2012-09-23
 Changes:
+  2015-07-19 Phil: Added PARAM metaword for simple pages to understand CALL syntax with named parameters.
   2015-04-21 Phil: documentation, comments
 
 @End_DESCR */
@@ -143,29 +144,30 @@ class XBCode extends WAClass
       // ==== Level 00 meta code (no param, no content)
       '\[\[(W)IDGETS\]\]'.                                                                // index based 1
       '|\[\[(P)ARAM([0-9]{1,2})\]\]'.                                                     // index based 2
+      '|\[\[(PA)RAM\,(.*?)\]\]'.                                                          // index based 4
 
       // ==== Level 01 meta code (params, no content)
-      '|\[\[(WI)DGETS\,(.*?)\]\]'.                                                        // index based 4
-      '|\[\[(LI)NK\,(.*?)\]\]'.                                                           // index based 6
-      '|\[\[(SY)SPARAM\,(.*?)\]\]'.                                                       // index based 8
-      '|\[\[(CL)IENTPARAM\,(.*?)\]\]'.                                                    // index based 10
-      '|\[\[(PA)GEPARAM\,(.*?)\]\]'.                                                      // index based 12
-      '|\[\[(LO)CALPAGEPARAM\,(.*?)\]\]'.                                                 // index based 14
-      '|\[\[(IN)STANCEPARAM\,(.*?)\]\]'.                                                  // index based 16
-      '|\[\[L(OC)ALINSTANCEPARAM\,(.*?)\]\]'.                                             // index based 18
-      '|\[\[(VA)R\,(.*?)\]\]'.                                                            // index based 20
-      '|\[\[(JS)\,(.*?)\]\]'.                                                             // index based 22
-      '|\[\[(CS)S\,(.*?)\]\]'.                                                            // index based 24
+      '|\[\[(WI)DGETS\,(.*?)\]\]'.                                                        // index based 6
+      '|\[\[(LI)NK\,(.*?)\]\]'.                                                           // index based 8
+      '|\[\[(SY)SPARAM\,(.*?)\]\]'.                                                       // index based 10
+      '|\[\[(CL)IENTPARAM\,(.*?)\]\]'.                                                    // index based 12
+      '|\[\[(PA)GEPARAM\,(.*?)\]\]'.                                                      // index based 14
+      '|\[\[(LO)CALPAGEPARAM\,(.*?)\]\]'.                                                 // index based 16
+      '|\[\[(IN)STANCEPARAM\,(.*?)\]\]'.                                                  // index based 18
+      '|\[\[L(OC)ALINSTANCEPARAM\,(.*?)\]\]'.                                             // index based 20
+      '|\[\[(VA)R\,(.*?)\]\]'.                                                            // index based 22
+      '|\[\[(JS)\,(.*?)\]\]'.                                                             // index based 24
+      '|\[\[(CS)S\,(.*?)\]\]'.                                                            // index based 26
 
       // ==== Level 10 meta code (no params, content)
-      '|\[\[(PHP)(\,.*?){0,1}\:(.*?)PHP\]\]'.                                             // index based 26
+      '|\[\[(PHP)(\,.*?){0,1}\:(.*?)PHP\]\]'.                                             // index based 28
 
       // ==== Level 11 meta code (params, content)
-      '|\[\[(BLO)CK\,(.*?)(\:(.*?)){0,1}\]\]'.                                            // index based 29
-      '|\[\[(CA)LL\,(.*?)(\:(.*?)){0,1}\]\]'.                                             // index based 33
+      '|\[\[(BLO)CK\,(.*?)(\:(.*?)){0,1}\]\]'.                                            // index based 31
+      '|\[\[(CA)LL\,(.*?)(\:(.*?)){0,1}\]\]'.                                             // index based 35
 
       // ==== COMENTS
-      '|(%)--(.*?)--%'.                                                                   // index based 37
+      '|(%)--(.*?)--%'.                                                                   // index based 39
 
       '/s';
 
@@ -188,51 +190,53 @@ class XBCode extends WAClass
           $elements[$item++] = array('type' => 1);
         if ($result[2][$k] == 'P')
           $elements[$item++] = array('type' => 2, 'item' => $result[3][$k]);
-        if ($result[4][$k] == 'WI')
-          $elements[$item++] = array('type' => 3, 'id' => $result[5][$k]);
-        if ($result[6][$k] == 'LI')
-          $elements[$item++] = array('type' => 4, 'id' => $result[7][$k]);
-        if ($result[8][$k] == 'SY')
-          $elements[$item++] = array('type' => 5, 'param' => $result[9][$k]);
-        if ($result[10][$k] == 'CL')
-          $elements[$item++] = array('type' => 6, 'param' => $result[11][$k]);
-        if ($result[12][$k] == 'PA')
-          $elements[$item++] = array('type' => 7, 'param' => $result[13][$k]);
-        if ($result[14][$k] == 'LO')
-          $elements[$item++] = array('type' => 8, 'param' => $result[15][$k]);
-        if ($result[16][$k] == 'IN')
-          $elements[$item++] = array('type' => 9, 'param' => $result[17][$k]);
-        if ($result[18][$k] == 'OC')
-          $elements[$item++] = array('type' => 10, 'param' => $result[19][$k]);
-        if ($result[20][$k] == 'VA')
-          $elements[$item++] = array('type' => 20, 'param' => $result[21][$k]);
-        if ($result[22][$k] == 'JS')
-          $elements[$item++] = array('type' => 11, 'file' => $result[23][$k]);
-        if ($result[24][$k] == 'CS')
-          $elements[$item++] = array('type' => 12, 'file' => $result[25][$k]);
-        if ($result[26][$k] == 'PHP')
+        if ($result[4][$k] == 'PA')
+          $elements[$item++] = array('type' => 2, 'item' => $result[5][$k]);
+        if ($result[6][$k] == 'WI')
+          $elements[$item++] = array('type' => 3, 'id' => $result[7][$k]);
+        if ($result[8][$k] == 'LI')
+          $elements[$item++] = array('type' => 4, 'id' => $result[9][$k]);
+        if ($result[10][$k] == 'SY')
+          $elements[$item++] = array('type' => 5, 'param' => $result[11][$k]);
+        if ($result[12][$k] == 'CL')
+          $elements[$item++] = array('type' => 6, 'param' => $result[13][$k]);
+        if ($result[14][$k] == 'PA')
+          $elements[$item++] = array('type' => 7, 'param' => $result[15][$k]);
+        if ($result[16][$k] == 'LO')
+          $elements[$item++] = array('type' => 8, 'param' => $result[17][$k]);
+        if ($result[18][$k] == 'IN')
+          $elements[$item++] = array('type' => 9, 'param' => $result[19][$k]);
+        if ($result[20][$k] == 'OC')
+          $elements[$item++] = array('type' => 10, 'param' => $result[21][$k]);
+        if ($result[22][$k] == 'VA')
+          $elements[$item++] = array('type' => 20, 'param' => $result[23][$k]);
+        if ($result[24][$k] == 'JS')
+          $elements[$item++] = array('type' => 11, 'file' => $result[25][$k]);
+        if ($result[26][$k] == 'CS')
+          $elements[$item++] = array('type' => 12, 'file' => $result[27][$k]);
+        if ($result[28][$k] == 'PHP')
         {
-          $elements[$item++] = array('type' => 13, 'catch' => ($result[27][$k]==',catch'?true:false), 'code' => $result[28][$k]);
+          $elements[$item++] = array('type' => 13, 'catch' => ($result[29][$k]==',catch'?true:false), 'code' => $result[30][$k]);
         }
-        if ($result[29][$k] == 'BLO')
+        if ($result[31][$k] == 'BLO')
         {
           $params = array();
-          if ($result[31][$k])
+          if ($result[33][$k])
           {
-            $lines = str_replace("\r", '', $result[32][$k]);
+            $lines = str_replace("\r", '', $result[34][$k]);
             $xlines = explode("\n", $lines);
             foreach($xlines as $line)
               $params[] = $line;
           }
-          $data = explode(',', $result[30][$k]);
+          $data = explode(',', $result[32][$k]);
           $elements[$item++] = array('type' => 14, 'id' => $data[0], 'version' => isset($data[1])?$data[1]:null, 'language' => isset($data[2])?$data[2]:null, 'params' => $params);
         }
-        if ($result[33][$k] == 'CA')
+        if ($result[35][$k] == 'CA')
         {
           $params = array();
-          if ($result[35][$k])
+          if ($result[37][$k])
           {
-            $lines = str_replace("\r", "\n", $result[36][$k]);
+            $lines = str_replace("\r", "\n", $result[38][$k]);
             $xlines = explode("\n", $lines);
             foreach($xlines as $line)
             {
@@ -251,7 +255,7 @@ class XBCode extends WAClass
               }
             }
           }
-          $data = explode(',', $result[34][$k]);
+          $data = explode(',', $result[36][$k]);
           $elements[$item++] = array('type' => 16, 'id' => $data[0], 'version' => isset($data[1])?$data[1]:null, 'language' => isset($data[2])?$data[2]:null, 'params' => $params);
         }
       }
