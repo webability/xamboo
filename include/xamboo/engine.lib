@@ -46,7 +46,7 @@ Changes:
 
 class engine extends WAClass
 {
-  const VERSION = '2.0.4';
+  const VERSION = '2.0.5';
 
   public $URI = '';
   public $maincontext;

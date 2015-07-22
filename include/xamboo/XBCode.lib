@@ -181,7 +181,7 @@ class XBCode extends WAClass
       while (list($k, $E) = each($result[0]))
       {
         $pos = strpos($TEXT, $E);
-        if ($result[37][$k] == '%') // invalidate any comment
+        if ($result[39][$k] == '%') // invalidate any comment
           $TEXT = substr_replace($TEXT, '', $pos, strlen($E));
         else
           $TEXT = substr_replace($TEXT, '__'.$item.'__', $pos, strlen($E));

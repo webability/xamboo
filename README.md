@@ -2,7 +2,7 @@
 
 Xamboo v2
 =============================
-This is the build 004
+This is the build 005
 
 Manuals
 =======================
@@ -15,6 +15,11 @@ Translations are also welcome.
 
 Version Changes Control
 =======================
+
+V2 Build 005 - 2015-07-21
+-----------------------
+> Uses CORE 2.0.1
+- An important error has entered into XBCode on last version 2.0.4 and has been corrected: the metalanguage comments %-- ... --% were not working correctly
 
 V2 Build 004 - 2015-07-19
 -----------------------
