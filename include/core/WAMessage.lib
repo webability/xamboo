@@ -35,6 +35,8 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace core;
+
 class WAMessage
 {
   // directory to search for the static messages

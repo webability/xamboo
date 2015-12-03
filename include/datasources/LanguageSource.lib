@@ -45,6 +45,8 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace datasources;
+
 class LanguageSource extends DataSource
 {
   protected $originsource = null;
@@ -117,7 +119,7 @@ class LanguageSource extends DataSource
     // origin source is new, we recalculate all the chain
     if ($this->tm1 > $this->tm2)
     {
-      parent::write(new WALanguage($this->originsource->read()));
+      parent::write(new \core\WALanguage($this->originsource->read()));
       if ($this->fastobjectsource)
         $this->fastobjectsource->write($this->data);
     }

@@ -34,6 +34,8 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace xamboo;
+
 class XBCompiler
 {
   public static function compileLines($text)

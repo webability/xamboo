@@ -34,8 +34,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace patterns;
 
-class Multiton extends WAObject
+class Multiton extends \core\WAObject
 {
   private static $instance = array();
   protected $parameter = null;
@@ -43,7 +44,7 @@ class Multiton extends WAObject
   function __construct($parameter)
   {
     if (isset(self::$instance[get_class($this)][$parameter]))
-      throw new PatternError(WAMessage::getMessage('Multiton.noclone').get_class($this)."[$parameter]");
+      throw new \throwables\PatternError(\core\WAMessage::getMessage('Multiton.noclone').get_class($this)."[$parameter]");
     parent::__construct();
     self::$instance[get_class($this)][$parameter] = $this;
     $this->parameter = $parameter;
@@ -60,7 +61,7 @@ class Multiton extends WAObject
 
   public function __clone()
   {
-    throw new PatternError(WAMessage::getMessage('Multiton.noclone').get_class($this)."[$this->parameter]");
+    throw new \throwables\PatternError(\core\WAMessage::getMessage('Multiton.noclone').get_class($this)."[$this->parameter]");
   }
 
 }

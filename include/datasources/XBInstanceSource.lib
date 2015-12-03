@@ -49,6 +49,8 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace datasources;
+
 class XBInstanceSource extends DataSource
 {
   protected $originsource = null;
@@ -123,7 +125,7 @@ class XBInstanceSource extends DataSource
     // origin source is new, we recalculate all the chain
     if ($this->tm1 > $this->tm2)
     {
-      parent::write(new XBInstance($this->originsource->read()));
+      parent::write(new \xamboo\XBInstance($this->originsource->read()));
       if ($this->fastobjectsource)
         $this->fastobjectsource->write($this->data);
     }

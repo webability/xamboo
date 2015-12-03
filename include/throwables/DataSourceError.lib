@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class DataSourceError extends WAError
+namespace throwables;
+
+class DataSourceError extends \core\WAError
 {}
 
 ?>

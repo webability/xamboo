@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class XambooError extends WAError
+namespace throwables;
+
+class XambooError extends \core\WAError
 {}
 
 ?>

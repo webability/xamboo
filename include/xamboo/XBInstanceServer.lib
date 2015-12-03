@@ -37,7 +37,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class XBInstanceServer extends Multiton
+namespace xamboo;
+
+class XBInstanceServer extends \patterns\Multiton
 {
   private $instance = null;
 
@@ -52,13 +54,13 @@ class XBInstanceServer extends Multiton
 
     if (!is_file($this->base->PAGESDIR.$this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.instance'))
       return;
-    $this->instance = new XBInstanceSource(
-      new FileSource($this->base->PAGESDIR, $this->base->PAGESCONTAINER . '/' . $path .'/', $uid . '.instance'),
+    $this->instance = new \datasources\XBInstanceSource(
+      new \datasources\FileSource($this->base->PAGESDIR, $this->base->PAGESCONTAINER . '/' . $path .'/', $uid . '.instance'),
       $this->base->CACHE1?new FastObjectSource(
-        new FileSource($this->base->CACHE1DIR, 'afo/'. $this->base->PAGESCONTAINER .'/' . $path .'/', $uid . '.instance.afo', true),
-        $this->base->SHM?new SHMSource($this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.instance.afo', $this->base->SHM):null
+        new \datasources\FileSource($this->base->CACHE1DIR, 'afo/'. $this->base->PAGESCONTAINER .'/' . $path .'/', $uid . '.instance.afo', true),
+        $this->base->SHM?new \datasources\SHMSource($this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.instance.afo', $this->base->SHM):null
         ):null,
-      $this->base->HISTORY?new FileSource($this->base->HISTORYDIR, 'history/'. $this->base->PAGESCONTAINER . '/' . $path . '/', $uid . '.instance', true):null
+      $this->base->HISTORY?new \datasources\FileSource($this->base->HISTORYDIR, 'history/'. $this->base->PAGESCONTAINER . '/' . $path . '/', $uid . '.instance', true):null
       );
   }
   

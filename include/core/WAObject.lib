@@ -38,6 +38,7 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace core;
 
 class WAObject extends WADebug
 {
@@ -57,17 +58,17 @@ class WAObject extends WADebug
 
   public function __get($name)
   {
-    throw new CoreError(WAMessage::getMessage('WAObject.badget').get_class($this).'.'.$name);
+    throw new \throwables\CoreError(\core\WAMessage::getMessage('WAObject.badget').get_class($this).'.'.$name);
   }
 
   public function __set($name, $val)
   {
-    throw new CoreError(WAMessage::getMessage('WAObject.badset').get_class($this).'.'.$name);
+    throw new \throwables\CoreError(\core\WAMessage::getMessage('WAObject.badset').get_class($this).'.'.$name);
   }
 
   public function __call($name, $vars)
   {
-    throw new CoreError(WAMessage::getMessage('WAObject.badcall').get_class($this).'.'.$name.'()');
+    throw new \throwables\CoreError(\core\WAMessage::getMessage('WAObject.badcall').get_class($this).'.'.$name.'()');
   }
 
   // DEBUG FUNCTIONS

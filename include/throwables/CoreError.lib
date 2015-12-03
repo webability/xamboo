@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class CoreError extends WAError
+namespace throwables;
+
+class CoreError extends \core\WAError
 {}
 
 ?>

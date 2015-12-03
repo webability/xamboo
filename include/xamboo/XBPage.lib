@@ -37,7 +37,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class XBPage extends WAClass implements ArrayAccess, Iterator, Countable
+namespace xamboo;
+
+class XBPage extends \core\WAClass implements \ArrayAccess, \Iterator, \Countable
 {
   protected $entries = array();
 

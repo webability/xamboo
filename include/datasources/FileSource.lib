@@ -43,6 +43,8 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace datasources;
+
 class FileSource extends DataSource
 {
   protected $basepath = '';  // absolute, terminated by /
@@ -126,11 +128,11 @@ class FileSource extends DataSource
     if (self::$debug || $this->localdebug)
       $this->doDebug("include/datasource/FileSource->write($data)", WADebug::SYSTEM);
     if ($this->createdir)
-      WAFile::createDirectory($this->basepath, $this->path); // throw error if cannot create
+      \core\WAFile::createDirectory($this->basepath, $this->path); // throw error if cannot create
 
     $fp = fopen($this->basepath.$this->path.$this->filename, 'wb');
     if (!$fp)
-      throw new DataSourceError(WAMessage::getMessage('FileSource.fileerror').$this->basepath.$this->path.$this->filename);
+      throw new \throwables\DataSourceError(\core\WAMessage::getMessage('FileSource.fileerror').$this->basepath.$this->path.$this->filename);
     fwrite($fp, $data);
     fclose($fp);
     return true;

@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class XambooException extends WAException
+namespace throwables;
+
+class XambooException extends \core\WAException
 {}
 
 ?>

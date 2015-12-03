@@ -37,6 +37,8 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace datasources;
+
 class SHMSource extends DataSource
 {
   protected $SHM;

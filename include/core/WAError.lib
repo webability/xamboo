@@ -29,7 +29,31 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class WAError extends WAThrowable
-{}
+namespace core;
+
+if (PHP_VERSION_ID < 70000)
+{
+  class WAError extends \Exception
+  {
+    use WAThrowable;
+    
+    function __construct($message = null)
+    {
+      parent::__construct($message);
+    }
+  }
+}
+else
+{
+  class WAError extends \Error
+  {
+    use WAThrowable;
+    
+    function __construct($message = null)
+    {
+      parent::__construct($message);
+    }
+  }
+}
 
 ?>

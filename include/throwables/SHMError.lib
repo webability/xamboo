@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class SHMError extends WAError
+namespace throwables;
+
+class SHMError extends \core\WAError
 {}
 
 ?>

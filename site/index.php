@@ -105,8 +105,9 @@ $URI = $QUERY = $BASE_P = $base = null;
 
 // we create the base object with very basic config parameters
 // Only 1 parameter is absolutly necesary: PAGESDIR.
+include_once 'Base.lib';
 $base = new Base($config);
-WAMessage::setMessagesFile('../messages/message.'.$base->Language.'.xml');
+\core\WAMessage::setMessagesFile('../messages/message.'.$base->Language.'.xml');
   
 if (isset($_SERVER['REQUEST_URI']))
   $URI = strtolower($_SERVER['REQUEST_URI']);
@@ -133,7 +134,7 @@ if (!$BASE_P)
   $BASE_P = 'home';
 
 // Call the engine with the page
-$engine = new engine($URI);
+$engine = new \xamboo\engine($URI);
 // $engine->SKIN = 'myskin';
 print $engine->run($BASE_P);
 

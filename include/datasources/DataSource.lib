@@ -38,7 +38,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class DataSource extends WAObject
+namespace datasources;
+
+class DataSource extends \core\WAObject
 {
   protected $data = null;
   protected $timestamp = null;

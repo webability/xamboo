@@ -33,6 +33,8 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace core;
+
 // Static class to compile language XML file
 class WALanguageCompiler
 {

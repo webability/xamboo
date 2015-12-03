@@ -108,8 +108,9 @@ $URI = $QUERY = $BASE_P = $base = null;
 
 // we create the base object with very basic config parameters
 // Only 1 parameter is absolutly necesary: PAGESDIR.
+include_once 'Base.lib';
 $base = new Base($config);
-WAMessage::setMessagesFile('../messages/message.'.$base->Language.'.xml');
+\core\WAMessage::setMessagesFile('../messages/message.'.$base->Language.'.xml');
 
 // verify token REST params
 $method = $_SERVER['REQUEST_METHOD'];
@@ -159,7 +160,7 @@ if (!$BASE_P)
   $BASE_P = $COMMAND;
 
 // Call the engine with the page
-$engine = new engine(null);
+$engine = new \xamboo\engine(null);
 $text = $engine->run($BASE_P, null, null, null, null, strtoupper($method));
 $base->HTTPResponse->buildHeaders();
 print $text;

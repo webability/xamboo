@@ -1,6 +1,6 @@
 <?php
 
-class Base extends Base_Engine
+class Base extends \xamboo\Base_Engine
 {
   public function __construct($config)
   {

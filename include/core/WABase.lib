@@ -30,8 +30,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace core;
 
-class WABase extends Singleton
+class WABase extends \patterns\Singleton
 {
   public function __construct()
   {

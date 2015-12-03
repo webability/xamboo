@@ -1,8 +1,8 @@
 @UTF-8
 
-Xamboo v2
+Xamboo v3
 =============================
-This is the build 005
+This is the build 001
 
 Manuals
 =======================
@@ -15,6 +15,19 @@ Translations are also welcome.
 
 Version Changes Control
 =======================
+
+V3 Build 001 - 2015-12-02
+-----------------------
+- Many error corrected on namespaces
+- Module for integration with PHP application server included
+- Support for PHP application server in various libraries (HTTPRequest, response, Base)
+
+V3 Build 000 - 2015-11-17
+-----------------------
+> Uses CORE 3.0.0
+> Uses XConfig v2.0.0
+- Xamboo uses now namespaces and is fully compatible with PHP7
+- XConfig has been added for simple configuration of the tool
 
 V2 Build 005 - 2015-07-21
 -----------------------

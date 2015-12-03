@@ -46,6 +46,8 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace datasources;
+
 class XBLanguageSource extends LanguageSource
 {
   protected $historysource = null;

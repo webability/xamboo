@@ -46,8 +46,10 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace core;
+
 // Class to manage language table
-class WALanguage extends WAClass implements Iterator
+class WALanguage extends WAClass implements \Iterator
 {
   protected $id = '';
   protected $lang = '';

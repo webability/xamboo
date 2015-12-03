@@ -35,7 +35,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class XBInstance extends WAClass implements ArrayAccess, Iterator, Countable
+namespace xamboo;
+
+class XBInstance extends \core\WAClass implements \ArrayAccess, \Iterator, \Countable
 {
   protected $entries = array();
 

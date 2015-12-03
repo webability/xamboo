@@ -33,6 +33,8 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace core;
+
 // Static class to compile any XML file
 class WASimpleXML
 {
@@ -49,7 +51,7 @@ class WASimpleXML
 
   private static function convert($xml)
   {
-    if (!($xml instanceof SimpleXMLElement))
+    if (!($xml instanceof \SimpleXMLElement))
       return $xml;
 
     $nodename = $xml->getName();
@@ -88,7 +90,7 @@ class WASimpleXML
 
   private static function converttags($xml)
   {
-    if (!($xml instanceof SimpleXMLElement))
+    if (!($xml instanceof \SimpleXMLElement))
       return $xml;
 
     $node = array();

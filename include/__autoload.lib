@@ -23,28 +23,12 @@
 
 function __autoload($classname)
 {
-  $dirs = array(
-    './',
-    '../include/xamboo/',
-    '../include/core/',
-    '../include/patterns/',
-    '../include/datasources/',
-    '../include/throwables/'
-  );
-
-  $found = false;
-  foreach($dirs as $d)
+  if (is_file('../include/'.str_replace('\\', '/', $classname).".lib"))
   {
-    if (is_file($d.$classname.'.lib'))
-    {
-      include_once $d.$classname.'.lib';
-      $found = true;
-      break;
-    }
+    include_once '../include/'.str_replace('\\', '/', $classname).".lib";
+    return;
   }
-
-  if (!$found)
-    throw new Exception("The common library <b>$classname</b> doesn't exist.");
+  throw new \Error("The common library <b>$classname</b> has not been found.");
 }
 
 ?>

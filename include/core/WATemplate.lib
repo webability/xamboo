@@ -76,6 +76,7 @@
 */
 // Template keywords __XX__
 
+namespace core;
 
 class WATemplate extends WAClass
 {
@@ -249,7 +250,7 @@ class WATemplate extends WAClass
           foreach($localelements as $key => $values)
           {
             $tmp = $this->getTemplate($id.'.key.'.$key);
-            if (!$tmp && (is_array($values) || $values instanceof ArrayAccess) && isset($values[$check]))
+            if (!$tmp && (is_array($values) || $values instanceof \ArrayAccess) && isset($values[$check]))
               $tmp = $this->getTemplate($id.'.sel.'.$values[$check]);
             if (!$tmp && $num == 1)
               $tmp = $this->getTemplate($id.'.first');
@@ -287,9 +288,10 @@ class WATemplate extends WAClass
         $check = isset($e[4])?$e[4]:null;
         $localelements = $this->getElements($elements, $entry);
         $checkvalue = $check?(isset($localelements[$check])?$localelements[$check]:null):(WATemplate::is_usable($localelements, true)?$localelements:null);
+        $tmp = null;
         if (!$checkvalue)
           $tmp = $this->getTemplate($id.'.none');
-        else
+        elseif (!WATemplate::is_usable($checkvalue) && !is_object($checkvalue)) // not an array, traversable, or object, should be a value.
           $tmp = $this->getTemplate($id.'.'.$checkvalue);
         if (!$tmp)
           $tmp = $this->getTemplate($id);
@@ -697,12 +699,12 @@ class WATemplate extends WAClass
   {
     // objects are always traversable over public properties, anything that implement Traversable too, and arrays too
     // if all is true, accept also values
-    return is_array($data) || ($data instanceof Traversable && $data instanceof ArrayAccess) || ($all && $data);
+    return is_array($data) || ($data instanceof \Traversable && $data instanceof \ArrayAccess) || ($all && $data);
   }
 
   static public function is_countable($data)
   {
-    return $data instanceof Countable || is_array($data);
+    return $data instanceof \Countable || is_array($data);
   }
 
   static public function merge_objects($data1, $data2)

@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class FileException extends WAException
+namespace throwables;
+
+class FileException extends \core\WAException
 {}
 
 ?>

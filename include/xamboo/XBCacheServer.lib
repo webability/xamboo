@@ -35,7 +35,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class XBCacheServer extends Multiton
+namespace xamboo;
+
+class XBCacheServer extends \patterns\Multiton
 {
   private $cache;
 
@@ -46,9 +48,9 @@ class XBCacheServer extends Multiton
     // Separate page path from page id
     $uid = (strpos($id, '/') !== false)?substr($id, strrpos($id, '/')+1):$id;
     
-    $this->cache = new FastObjectSource(
-        new FileSource($this->base->CACHE2DIR, 'cache/'. $this->base->PAGESCONTAINER . '/' . $id . '/', $uid . '.cache.afo', true),
-        $this->base->SHM?new SHMSource( $this->base->PAGESCONTAINER . '/' . $id . '/' . $uid . '.cache.afo', $this->base->SHM):null
+    $this->cache = new \datasources\FastObjectSource(
+        new \datasources\FileSource($this->base->CACHE2DIR, 'cache/'. $this->base->PAGESCONTAINER . '/' . $id . '/', $uid . '.cache.afo', true),
+        $this->base->SHM?new \datasources\SHMSource( $this->base->PAGESCONTAINER . '/' . $id . '/' . $uid . '.cache.afo', $this->base->SHM):null
       );
   }
   

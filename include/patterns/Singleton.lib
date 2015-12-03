@@ -33,15 +33,16 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace patterns;
 
-class Singleton extends WAObject
+class Singleton extends \core\WAObject
 {
   private static $instance = array();
 
   public function __construct()
   {
     if (isset(self::$instance[get_class($this)]))
-      throw new PatternError(WAMessage::getMessage('Singleton.noclone').get_class($this));
+      throw new \throwables\PatternError(\core\WAMessage::getMessage('Singleton.noclone').get_class($this));
     parent::__construct();
     self::$instance[get_class($this)] = $this;
   }
@@ -55,9 +56,16 @@ class Singleton extends WAObject
     return self::$instance[$classname];
   }
 
+  public static function hasInstance($classname = null)
+  {
+    if (!$classname)
+      $classname = get_called_class();
+    return isset(self::$instance[$classname]);
+  }
+
   public function __clone()
   {
-    throw new PatternError(WAMessage::getMessage('Singleton.noclone').get_class($this));
+    throw new \throwables\PatternError(\core\WAMessage::getMessage('Singleton.noclone').get_class($this));
   }
 
 }

@@ -35,7 +35,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class HTTPResponse extends WAClass
+namespace xamboo;
+
+class HTTPResponse extends \core\WAClass
 {
   private $header = array();
   private $cookies = array();

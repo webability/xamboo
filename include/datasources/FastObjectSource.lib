@@ -43,6 +43,8 @@
 
 // A Fast Object is ALWAYS serialized into the datasource
 
+namespace datasources;
+
 class FastObjectSource extends DataSource
 {
   protected $datasource = null;

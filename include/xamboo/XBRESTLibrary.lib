@@ -36,8 +36,10 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace xamboo;
+
 // Class to manage a page object
-class XBRESTLibrary extends WAObject
+class XBRESTLibrary extends \core\WAObject
 {
   protected $template;
   protected $language;

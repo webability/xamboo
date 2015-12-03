@@ -1,6 +1,6 @@
 <?php
 
-class library_demo extends XBLibrary
+class library_demo extends  \xamboo\XBLibrary
 {
   public function __construct($template, $language)
   {

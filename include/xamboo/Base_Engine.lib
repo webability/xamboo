@@ -37,8 +37,12 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class Base_Engine extends WABase
+namespace xamboo;
+
+class Base_Engine extends \core\WABase
 {
+  public $config;          // config file
+  
   public $PAGESDIR;        // directory of pages of the instance
   public $PAGESCONTAINER;  // directory of pages of the instance}
 
@@ -68,7 +72,7 @@ class Base_Engine extends WABase
   public $errorpage = 'error';  // name of error page (generally with a template)
   public $errorblock = 'errorblock';  // name of error block (just a red replacement div)
   
-  public function __construct($config)
+  public function __construct($config, $context = null)
   {
     parent::__construct();
 
@@ -108,17 +112,17 @@ class Base_Engine extends WABase
     $this->errorpage = isset($config['errorpage'])?$config['errorpage']:'error';
     $this->errorblock = isset($config['errorblock'])?$config['errorblock']:'errorblock';
 
-    if (self::$htmlapi)
+//    if (self::$htmlapi)
     {
-      $this->HTTPRequest = new HTTPRequest();
-      $this->HTTPResponse = new HTTPResponse();
+      $this->HTTPRequest = new HTTPRequest($context);
+      $this->HTTPResponse = new HTTPResponse($context);
     }
 
     if ($this->SHMLOAD)
     {
       try
       {
-        $this->SHM = new WASHM($this->SHMSIZE, $this->SHMID);
+        $this->SHM = new WASHM($this->SHMSIZE, $this->SHMID, 'xb');
       }
       catch (SHMError $e)
       {
@@ -126,6 +130,11 @@ class Base_Engine extends WABase
         $this->SHM = null;
       }
     }
+  }
+  
+  public function postrun($data)
+  {
+    return $data;
   }
 
 }

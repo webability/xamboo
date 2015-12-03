@@ -29,7 +29,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class PatternError extends WAError
+namespace throwables;
+
+class PatternError extends \core\WAError
 {}
 
 ?>

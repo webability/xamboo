@@ -29,7 +29,16 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class WAException extends WAThrowable
-{}
+namespace core;
+
+class WAException extends \Exception
+{
+  use WAThrowable;
+
+  function __construct($message = null)
+  {
+    parent::__construct($message);
+  }
+}
 
 ?>

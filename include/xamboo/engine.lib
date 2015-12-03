@@ -33,6 +33,7 @@ Changes:
   2014-07-09 Phil: I added parted template [[CONTENT,blockid]] with multipart pages (only from library for now)
   2015-04-21 Phil: documentation, comments
   2015-04-22 Phil: Added declaration of 4 basic types of pages and the posibility to add new types
+  2015-11-17 Phil: Compatibility with PHP7, namespaces added
 
 @End_DESCR */
 
@@ -44,9 +45,11 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class engine extends WAClass
+namespace xamboo;
+
+class engine extends \core\WAClass
 {
-  const VERSION = '2.0.5';
+  const VERSION = '3.0.0';
 
   public $URI = '';
   public $maincontext;
@@ -55,7 +58,7 @@ class engine extends WAClass
   public $pagetypes = array(
       'simple' => array(
           'type' => 'server',
-          'server' => 'XBCodeServer',
+          'server' => '\xamboo\XBCodeServer',
           'run' => true
         ),
       'library' => array(
@@ -65,12 +68,12 @@ class engine extends WAClass
         ),
       'template' => array(
           'type' => 'server',
-          'server' => 'XBTemplateServer',
+          'server' => '\xamboo\XBTemplateServer',
           'run' => false
         ),
       'language' => array(
           'type' => 'server',
-          'server' => 'XBLanguageServer',
+          'server' => '\xamboo\XBLanguageServer',
           'run' => false
         ),
     );
@@ -311,7 +314,7 @@ class engine extends WAClass
           return $this->launchError($context, $P, 'Error: the page '.$P.' has no library PHP code: '."$P/$uid.lib", 'Error: the block '.$P.' has no library PHP code: '."$P/$uid.lib");
         }
         include_once $this->base->PAGESDIR.$this->base->PAGESCONTAINER."$P/$uid.lib";
-        $libname = str_replace(array('-'), '_', $uid);
+        $libname = '\\'.str_replace(array('-'), '_', $uid);
         $pagelib = new $libname($template, $language);
         $text = $pagelib->run($this, $params, $method);
       }
@@ -410,11 +413,11 @@ class engine extends WAClass
     { 
       if ($page != $this->base->errorpage)
         return $this->run($this->base->errorpage, null, array($page, $pagemessage));
-      throw new XambooError('Error: the page '.$this->base->errorpage.' does not exist');
+      throw new \throwables\XambooError('Error: the page '.$this->base->errorpage.' does not exist');
     }
     if ($context && $page != $this->base->errorblock)
       return $this->run($this->base->errorblock, 1, array($page, $blockmessage));
-    throw new XambooError('Error: the block '.$this->base->errorblock.' does not exist');
+    throw new \throwables\XambooError('Error: the block '.$this->base->errorblock.' does not exist');
   }
   
 }

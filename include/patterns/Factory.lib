@@ -35,8 +35,9 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+namespace patterns;
 
-class Factory extends WAObject
+class Factory extends \core\WAObject
 {
   private $catalog = array();
 
@@ -59,7 +60,7 @@ class Factory extends WAObject
       // We create new instante with parameters
       $args = func_get_args();
       array_shift($args);
-      $reflection = new ReflectionClass($this->catalog[$parameter]);
+      $reflection = new \ReflectionClass($this->catalog[$parameter]);
       $instance = call_user_func_array(array(&$reflection, 'newInstance'), $args);
       return $instance;
     }

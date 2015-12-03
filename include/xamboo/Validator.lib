@@ -35,7 +35,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class Validator extends Singleton
+namespace xamboo;
+
+class Validator extends \patterns\Singleton
 {
   const ALPHANUMERIC = 1;
   const NUMERIC = 2;

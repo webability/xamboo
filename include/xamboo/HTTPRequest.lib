@@ -38,7 +38,9 @@ Changes:
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-class HTTPRequest extends WAClass
+namespace xamboo;
+
+class HTTPRequest extends \core\WAClass
 {
   private $_GET = null;
   private $_POST = null;
@@ -51,40 +53,70 @@ class HTTPRequest extends WAClass
   public $METHOD = null;
   public $PUTDATA = null;
 
-  public function __construct()
+  public function __construct($context = null)
   {
     parent::__construct();
     
     if (self::$debug || $this->localdebug)
       $this->doDebug("xamboo/HTTPRequest->__construct()", WADebug::SYSTEM);
 
-    $this->_GET = $_GET;
-    $this->_POST = $_POST;
-    $this->_COOKIE = $_COOKIE;
-//    $this->_EURL = $this->decodeQueryString($this->base->decrypt(rawurldecode(str_replace(" ", "+", $this->getParameter("EURL")))));
-
-    if (extension_loaded('apache'))
-      $this->headers = getallheaders();
-    if (extension_loaded('nsapi'))
-      $this->headers = nsapi_request_headers();
-    if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+    if ($context)
     {
-      $this->IP = $_SERVER["HTTP_X_FORWARDED_FOR"];
-      $this->HOST = null;
+      $this->_GET = $context->request->gets;
+      $this->_POST = $context->request->posts;
+      $this->_COOKIE = $context->request->cookies;
+      
+      $this->headers = $context->request->headers;
+      
+      if (isset($context->request->headers["HTTP_X_FORWARDED_FOR"]))
+      {
+        $this->IP = $context->request->headers["HTTP_X_FORWARDED_FOR"];
+        $this->HOST = null;
+      }
+      else
+      {
+        $this->IP = $context->REMOTE_ADDR;
+        $this->HOST = isset($context->REMOTE_HOST)?$context->REMOTE_HOST:null;
+      }
+      
+      $this->METHOD = strtoupper($context->request->http['method']);
+      if ($this->METHOD == 'PUT')
+      {
+        $this->PUTDATA=$context->request->rawbody;
+        if ($this->PUTDATA)
+          $this->_POST = @json_decode($this->PUTDATA, true);
+      }      
     }
     else
     {
-      $this->IP = $_SERVER["REMOTE_ADDR"];
-      $this->HOST = isset($_SERVER["REMOTE_HOST"])?$_SERVER["REMOTE_HOST"]:null;
-    }
-    // special case: PUT method with JSON parameters in BODY, because PHP does not supper by default PUT method
-    // se we put the JSON body into _POST if available and correct syntax.
-    $this->METHOD = strtoupper($_SERVER['REQUEST_METHOD']);
-    if ($this->METHOD == 'PUT')
-    {
-      $this->PUTDATA=file_get_contents('php://input');
-      if ($this->PUTDATA)
-        $this->_POST = @json_decode($this->PUTDATA, true);
+      $this->_GET = $_GET;
+      $this->_POST = $_POST;
+      $this->_COOKIE = $_COOKIE;
+  //    $this->_EURL = $this->decodeQueryString($this->base->decrypt(rawurldecode(str_replace(" ", "+", $this->getParameter("EURL")))));
+
+      if (extension_loaded('apache'))
+        $this->headers = getallheaders();
+      if (extension_loaded('nsapi'))
+        $this->headers = nsapi_request_headers();
+      if (isset($_SERVER["HTTP_X_FORWARDED_FOR"]))
+      {
+        $this->IP = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        $this->HOST = null;
+      }
+      else
+      {
+        $this->IP = $_SERVER["REMOTE_ADDR"];
+        $this->HOST = isset($_SERVER["REMOTE_HOST"])?$_SERVER["REMOTE_HOST"]:null;
+      }
+      // special case: PUT method with JSON parameters in BODY, because PHP does not supper by default PUT method
+      // se we put the JSON body into _POST if available and correct syntax.
+      $this->METHOD = strtoupper($_SERVER['REQUEST_METHOD']);
+      if ($this->METHOD == 'PUT')
+      {
+        $this->PUTDATA=file_get_contents('php://input');
+        if ($this->PUTDATA)
+          $this->_POST = @json_decode($this->PUTDATA, true);
+      }
     }
   }
 
