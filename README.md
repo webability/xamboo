@@ -22,6 +22,7 @@ V3 Build 001 - 2015-12-02
 - Many error corrected on namespaces
 - Module for integration with PHP application server included
 - Support for PHP application server in various libraries (HTTPRequest, HTTPResponse, Base_Engine)
+- Now uses XConfig in the examples to load the xamboo.conf configuration file from repository
 
 V3 Build 000 - 2015-11-17
 -----------------------
