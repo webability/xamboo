@@ -18,9 +18,10 @@ Version Changes Control
 
 V3 Build 001 - 2015-12-02
 -----------------------
+> Uses CORE 3.0.1
 - Many error corrected on namespaces
 - Module for integration with PHP application server included
-- Support for PHP application server in various libraries (HTTPRequest, response, Base)
+- Support for PHP application server in various libraries (HTTPRequest, HTTPResponse, Base_Engine)
 
 V3 Build 000 - 2015-11-17
 -----------------------
