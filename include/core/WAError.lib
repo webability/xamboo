@@ -31,47 +31,8 @@
 
 namespace core;
 
-if (PHP_VERSION_ID < 50400)
-{
-  class WAError extends \Exception
-  {
-    function __construct($message = null)
-    {
-      parent::__construct($message);
-    }
-    
-    public function __toString()
-    {
-      $message = $this->getMessage();
-      if (WADebug::getHTMLAPI())
-      {
-        $error = <<<EOF
-<table border="1"><tr><td bgcolor="#fdd"><b>ERROR: </b></td><td bgcolor="#fdd">{$message}</td></tr>
-<tr><td><b>THROWN: </b></td><td>{$this->file} (<b>{$this->line}</b>)</td></tr>
-<tr><td valign="top"><b>TRACE: </b></td><td valign="top">
-EOF;
-        foreach($this->getTrace() as $k => $t)
-        {
-          $error .= (isset($t['file'])?$t['file']:'No file').' (<b>'.(isset($t['line'])?$t['line']:'No line').'</b>) :: calling <font color="blue">'.(isset($t['class'])?$t['class']:'').(isset($t['type'])?$t['type']:'').(isset($t['function'])?$t['function']:'No function').'</font><br />'.PHP_EOL;
-        }
-        $error .= '</td></tr>'.PHP_EOL.'</table>';
-        return $error;
-      }
-      $error = "ERROR: {$message}".PHP_EOL."THROWN: {$this->file} ({$this->line})".PHP_EOL."TRACE:".PHP_EOL;
-      foreach($this->getTrace() as $k => $t)
-      {
-        if ($k) // we dont write 1rst errror since it is where we threw the object
-          $error .= (isset($t['file'])?$t['file']:'No file').' ('.(isset($t['line'])?$t['line']:'No line').') :: calling '.(isset($t['class'])?$t['class']:'').(isset($t['type'])?$t['type']:'').(isset($t['function'])?$t['function']:'No function').PHP_EOL;
-      }
-      return $error;
-    }
-  }
-}
-
-// IF YOU ARE USING PHP 5.3 OR BEFORE; COMMENT THE FOLLOWING LINES, SINCE "use" IS SEEN AS A SYNTAX ERROR:
-// /*
-elseif (PHP_VERSION_ID < 70000)
-{
+if (PHP_VERSION_ID < 70000)
+{ // 5.4 and after
   class WAError extends \Exception
   {
     use WAThrowable;
@@ -83,7 +44,7 @@ elseif (PHP_VERSION_ID < 70000)
   }
 }
 else
-{
+{ // 7 and after
   class WAError extends \Error
   {
     use WAThrowable;
@@ -94,7 +55,5 @@ else
     }
   }
 }
-// END OF COMMENT FOR PHP 5.3 OR BEFORE
-// */
 
 ?>

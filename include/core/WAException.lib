@@ -31,13 +31,28 @@
 
 namespace core;
 
-class WAException extends \Exception
-{
-  use WAThrowable;
-
-  function __construct($message = null)
+if (PHP_VERSION_ID < 70000)
+{ // 5.4 and after
+  class WAException extends \Exception
   {
-    parent::__construct($message);
+    use WAThrowable;
+    
+    function __construct($message = null)
+    {
+      parent::__construct($message);
+    }
+  }
+}
+else
+{ // 7 and after
+  class WAException extends \Error
+  {
+    use WAThrowable;
+    
+    function __construct($message = null)
+    {
+      parent::__construct($message);
+    }
   }
 }
 
