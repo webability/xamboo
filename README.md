@@ -16,7 +16,13 @@ Translations are also welcome.
 Version Changes Control
 =======================
 
-V3 Build 001 - 2015-12-02
+V3.0.2 - 2016-01-26
+-----------------------
+> Uses CORE 3.0.2
+> Uses XConfig 2.0.1
+- Error corrected on namespaces in some servers
+
+V3 Build 1 - 2015-12-02
 -----------------------
 > Uses CORE 3.0.1
 - Many error corrected on namespaces

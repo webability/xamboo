@@ -56,7 +56,7 @@ class XBInstanceServer extends \patterns\Multiton
       return;
     $this->instance = new \datasources\XBInstanceSource(
       new \datasources\FileSource($this->base->PAGESDIR, $this->base->PAGESCONTAINER . '/' . $path .'/', $uid . '.instance'),
-      $this->base->CACHE1?new FastObjectSource(
+      $this->base->CACHE1?new \datasources\FastObjectSource(
         new \datasources\FileSource($this->base->CACHE1DIR, 'afo/'. $this->base->PAGESCONTAINER .'/' . $path .'/', $uid . '.instance.afo', true),
         $this->base->SHM?new \datasources\SHMSource($this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.instance.afo', $this->base->SHM):null
         ):null,

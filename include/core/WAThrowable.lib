@@ -49,8 +49,7 @@ trait WAThrowable
 EOF;
       foreach($this->getTrace() as $k => $t)
       {
-        if ($k) // we dont write 1rst errror since it is where we threw the object
-          $error .= (isset($t['file'])?$t['file']:'No file').' (<b>'.(isset($t['line'])?$t['line']:'No line').'</b>) :: calling <font color="blue">'.(isset($t['class'])?$t['class']:'').(isset($t['type'])?$t['type']:'').(isset($t['function'])?$t['function']:'No function').'</font><br />'.PHP_EOL;
+        $error .= (isset($t['file'])?$t['file']:'No file').' (<b>'.(isset($t['line'])?$t['line']:'No line').'</b>) :: calling <font color="blue">'.(isset($t['class'])?$t['class']:'').(isset($t['type'])?$t['type']:'').(isset($t['function'])?$t['function']:'No function').'</font><br />'.PHP_EOL;
       }
       $error .= '</td></tr>'.PHP_EOL.'</table>';
       return $error;

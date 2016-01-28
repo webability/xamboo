@@ -31,7 +31,7 @@ namespace xconfig;
 
 class XConfig implements \ArrayAccess, \Iterator, \Countable
 {
-  const VERSION = '2.0.0';
+  const VERSION = '2.0.1';
   protected $entries = array();
 
   /* The constructor receive a data, that may be a string (to be compiled) or an array of param => value
@@ -47,7 +47,7 @@ class XConfig implements \ArrayAccess, \Iterator, \Countable
     { // data buffer
       $this->entries = XConfig::compile($data);
     }
-    else if (is_array($data))
+    elseif (is_array($data))
     {
       if (isset($data['entries']))
         $this->entries = $data['entries'];
@@ -66,19 +66,23 @@ class XConfig implements \ArrayAccess, \Iterator, \Countable
   public function merge($data)
   {
     $entries = array();
-    if (is_string($data))
+    if ($data instanceof \xconfig\XConfig)
+    {
+      $entries = $data;
+    }
+    elseif (is_string($data))
     { // data buffer
       $entries = XConfig::compile($data);
     }
-    else if (is_array($data))
+    elseif (is_array($data))
     {
       if (isset($data['entries']))
         $entries = $data['entries'];
     }
-    else if ($data instanceof XConfig)
-      $entries = $data;
     foreach($entries as $entry => $value)
+    {
       $this->entries[$entry] = $value;
+    }
   }
   
   // magic functions implements
@@ -150,7 +154,7 @@ class XConfig implements \ArrayAccess, \Iterator, \Countable
 
   public function valid()
   {
-    return current($this->entries) !== false;
+    return !is_null(key($this->entries));
   }
 
   // Countable implemented

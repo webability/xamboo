@@ -239,9 +239,9 @@ class WASHM extends WADebug
     if ($link)
     {
       $linkdata = $this->mapped?$link['p']:$link;
-      $var = shm_remove_var($this->shm, $linkdata);
-      if (!$var)
-        throw new \throwables\SHMError(\core\WAMessage::getMessage('WASHM.varaccess'));
+      $var = @shm_remove_var($this->shm, $linkdata);
+//      if (!$var)  // The variable was NOT in memory , why bother ?
+//        throw new \throwables\SHMError(\core\WAMessage::getMessage('WASHM.varaccess'));
     }
     $this->detach();
   }

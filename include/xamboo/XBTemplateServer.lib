@@ -56,7 +56,7 @@ class XBTemplateServer extends \patterns\Multiton
       return;
     $this->template = new \datasources\XBTemplateSource(
       new \datasources\FileSource($this->base->PAGESDIR, $this->base->PAGESCONTAINER . '/'. $path .'/', $uid . '.template'),
-      $this->base->CACHE1?new FastObjectSource(
+      $this->base->CACHE1?new \datasources\FastObjectSource(
         new \datasources\FileSource($this->base->CACHE1DIR, 'afo/'. $this->base->PAGESCONTAINER . '/' . $path .'/', $uid . '.template.afo', true),
         $this->base->SHM?new \datasources\SHMSource($this->base->PAGESCONTAINER . '/' . $path . '/' . $uid . '.template.afo', $this->base->SHM):null
         ):null,
