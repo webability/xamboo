@@ -21,14 +21,28 @@
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-function __autoload($classname)
+global $BASEDIR;
+$BASEDIR = '../';
+
+function XBautoload($classname)
 {
-  if (is_file('../include/'.str_replace('\\', '/', $classname).".lib"))
+  global $BASEDIR;
+
+  if (is_file($BASEDIR . 'include/'.str_replace('\\', '/', $classname).".lib"))
   {
-    include_once '../include/'.str_replace('\\', '/', $classname).".lib";
+    // System server and xamboo
+    include_once $BASEDIR . 'include/'.str_replace('\\', '/', $classname).".lib";
     return;
   }
-  throw new \Error("The common library <b>$classname</b> has not been found.");
+  elseif (is_file($BASEDIR . 'application/'.str_replace('\\', '/', $classname).".lib"))
+  {
+    // The xamboo application site for example
+    include_once $BASEDIR . 'application/'.str_replace('\\', '/', $classname).".lib";
+    return;
+  }
+
+  // We could throw an exception if we want to be greedy, but we should let other autoloads work
 }
 
+spl_autoload_register('XBautoload');
 ?>

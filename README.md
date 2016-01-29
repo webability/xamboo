@@ -2,7 +2,10 @@
 
 Xamboo v3
 =============================
-This is the build 001
+This is the build 003
+
+[![Build Status](https://travis-ci.org/webability/xamboo.svg?branch=master)](https://travis-ci.org/webability/xamboo)
+
 
 Manuals
 =======================
@@ -15,6 +18,13 @@ Translations are also welcome.
 
 Version Changes Control
 =======================
+
+V3.0.3 - 2016-??
+-----------------------
+> Uses CORE 3.0.3
+> Uses XConfig 2.0.1
+- Rewrite the __autoload to be SPL compliant
+- Implementation of testunit on travis
 
 V3.0.2 - 2016-01-26
 -----------------------
