@@ -2,7 +2,9 @@
 
 namespace testunit;
 
-class LoadTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class LoadTest extends TestCase
 {
   public function testCreate()
   {
