@@ -3,7 +3,7 @@
 /*
     WATemplate.lib, DomCore, the WebAbility(r) Core System
     Contains the basic class to compile an HTML/XML Template file to a PHP array/object
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -54,10 +54,22 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
-// class to compile and keep a Template string
-/* A template is:
+/*
+class to compile and keep a Template string
+A template is a set of HTML/XML (or any other language) set of:
 
+Comments:
    %-- comments --%
+Subtemplates:
+   xml/html code
+   [[id]]
+     xml/html code
+     [[id]]
+     xml/html code indented
+     [[]]
+     xml/html code
+   [[]]
+Alternative subtemplates for compatibility backward:
    xml/html code
    %%SUBTEMPLATE(id)%%
      xml/html code
@@ -66,15 +78,12 @@
      %%ENDSUBTEMPLATE%%
      xml/html code
    %%ENDSUBTEMPLATE%%
-
-   Meta elements:
+Meta elements:
    ??xx??   if/then/else
    @@xx@@   loops
    &&xx&&   references
-   !!xx!!   debug
-
+   !!xx!!   debug (dump)
 */
-// Template keywords __XX__
 
 namespace core;
 

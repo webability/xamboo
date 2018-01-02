@@ -3,7 +3,7 @@
 /*
     FileSource.lib, DomCore, the WebAbility(r) Core System
     Contains the basic file access object
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -19,6 +19,9 @@
 
     You should have received a copy of the GNU General Public License
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+    
+    Changes:
+      2017-04-16: Phil, I added clearstatcache to the write method in case we create the directory, the code may not find the path
 */
 
 /* @UML_Box -- Do not edit
@@ -57,7 +60,7 @@ class FileSource extends DataSource
     parent::__construct(null);
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasource/FileSource->__construct($basepath, $path, $filename, $createdir)", WADebug::SYSTEM);
+      $this->doDebug("include/datasource/FileSource->__construct($basepath, $path, $filename, $createdir)", \core\WADebug::SYSTEM);
 
     $this->basepath = $basepath;
     if ($this->basepath && substr($this->basepath, -1) != '/')
@@ -72,7 +75,7 @@ class FileSource extends DataSource
   public function setCreateDir($flag)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasource/FileSource->setCreateDir($flag)", WADebug::SYSTEM);
+      $this->doDebug("include/datasource/FileSource->setCreateDir($flag)", \core\WADebug::SYSTEM);
     $this->createdir = $flag;
   }
 
@@ -80,8 +83,8 @@ class FileSource extends DataSource
   {
     if (self::$debug || $this->localdebug)
     {
-      $this->doDebug('include/datasource/FileSource->isValid()', WADebug::SYSTEM);
-      $this->doDebug('include/datasource/FileSource->isValid::FilePath = '.$this->basepath.$this->path.$this->filename, WADebug::INFO);
+      $this->doDebug('include/datasource/FileSource->isValid()', \core\WADebug::SYSTEM);
+      $this->doDebug('include/datasource/FileSource->isValid::FilePath = '.$this->basepath.$this->path.$this->filename,  \core\WADebug::INFO);
     }
     clearstatcache();
     return file_exists($this->basepath.$this->path.$this->filename);
@@ -90,7 +93,7 @@ class FileSource extends DataSource
   public function getTimeStamp()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasource/FileSource->getTimeStamp()', WADebug::SYSTEM);
+      $this->doDebug('include/datasource/FileSource->getTimeStamp()', \core\WADebug::SYSTEM);
     clearstatcache();
     $tm = @filemtime($this->basepath.$this->path.$this->filename);
     return $tm;
@@ -109,7 +112,7 @@ class FileSource extends DataSource
   public function read($asarray = false)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasource/FileSource->read($asarray)", WADebug::SYSTEM);
+      $this->doDebug("include/datasource/FileSource->read($asarray)", \core\WADebug::SYSTEM);
     clearstatcache();
     if (!file_exists($this->basepath.$this->path.$this->filename))
       return null;
@@ -126,10 +129,11 @@ class FileSource extends DataSource
   public function write($data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasource/FileSource->write($data)", WADebug::SYSTEM);
+      $this->doDebug("include/datasource/FileSource->write($data)", \core\WADebug::SYSTEM);
     if ($this->createdir)
       \core\WAFile::createDirectory($this->basepath, $this->path); // throw error if cannot create
 
+    clearstatcache();
     $fp = fopen($this->basepath.$this->path.$this->filename, 'wb');
     if (!$fp)
       throw new \throwables\DataSourceError(\core\WAMessage::getMessage('FileSource.fileerror').$this->basepath.$this->path.$this->filename);
@@ -141,7 +145,7 @@ class FileSource extends DataSource
   public function unlink()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasource/FileSource->unlink()', WADebug::SYSTEM);
+      $this->doDebug('include/datasource/FileSource->unlink()', \core\WADebug::SYSTEM);
     if (is_file($this->basepath.$this->path.$this->filename))
       unlink($this->basepath.$this->path.$this->filename);
   }

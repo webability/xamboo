@@ -26,6 +26,7 @@ Changes:
   2012-09-24 Phil: agregue el soporte para comentarios en el compilador con '#'
   2012-09-24 Phil: agregue el soporte para array, iterator y countable
   2015-04-21 Phil: documentation, comments
+  2017-04-21 Phil: Implemented parameter acceptpathparameters local/global. If yes, this page will accept parameters on path (after name of page, i.e /path/to/this/page/param1/param2...). Compilation of params with XConfig::compile, not anymore with XBCompiler
 
 @End_DESCR */
 
@@ -55,6 +56,8 @@ class XBPage extends \core\WAClass implements \ArrayAccess, \Iterator, \Countabl
       if (isset($data['entries']))
         $this->entries = $data['entries'];
     }
+    if (!isset($this->acceptpathparameters))
+      $this->acceptpathparameters = $this->base->config->acceptpathparameters;
   }
 
   public function __get($name)
@@ -67,7 +70,7 @@ class XBPage extends \core\WAClass implements \ArrayAccess, \Iterator, \Countabl
   public function __set($name, $val)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/common/XBInstance->__set( $name, $val )", WADebug::SYSTEM);
+      $this->doDebug("include/common/XBInstance->__set( $name, $val )", \core\WADebug::SYSTEM);
 
     $this->entries[$name] = $val;
     return $this;
@@ -81,7 +84,7 @@ class XBPage extends \core\WAClass implements \ArrayAccess, \Iterator, \Countabl
   public function __unset($name)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/common/XBInstance->__unset( $name )", WADebug::SYSTEM);
+      $this->doDebug("include/common/XBInstance->__unset( $name )", \core\WADebug::SYSTEM);
 
     unset($this->entries[$name]);
   }
@@ -149,7 +152,7 @@ class XBPage extends \core\WAClass implements \ArrayAccess, \Iterator, \Countabl
   public function setArray($array)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/common/XBInstance->setArray( $array )", WADebug::SYSTEM);
+      $this->doDebug("include/common/XBInstance->setArray( $array )", \core\WADebug::SYSTEM);
 
     foreach($array as $k => $v)
       $this->entries[$k] = $v;
@@ -173,7 +176,7 @@ class XBPage extends \core\WAClass implements \ArrayAccess, \Iterator, \Countabl
 
   static function compile($data)
   {
-    return XBCompiler::compileLines($data);
+    return \xconfig\XConfig::compile($data);
   }
   
   static function create($data)

@@ -3,7 +3,7 @@
 /*
     Singleton.lib, DomCore, the WebAbility(r) Core System
     Contains the singleton pattern class
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -29,7 +29,8 @@
 |------------------------------------------------------------------|
 | + new Singleton()                                                |
 | + ::getInstance($name: string): Singleton extended               |
-| + __clone(): object                                              |
+| + ::hasInstance($name: string): boolean                          |
+| + __clone(): error thrown                                        |
 |------------------------------------------------------------------|
 @End_UML_Box */
 

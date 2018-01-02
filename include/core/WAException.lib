@@ -3,7 +3,7 @@
 /*
     WAException.lib, DomCore, the WebAbility(r) Core System
     Contains the basic exception to throw
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -45,7 +45,7 @@ if (PHP_VERSION_ID < 70000)
 }
 else
 { // 7 and after
-  class WAException extends \Error
+  class WAException extends \Exception
   {
     use WAThrowable;
     

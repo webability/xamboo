@@ -3,7 +3,7 @@
 /*
     WAThrowable.lib, DomCore, the WebAbility(r) Core System
     Contains the basic class to throw any error or exception
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -23,12 +23,9 @@
 
 /* @UML_Box
 |------------------------------------------------------------------|
-| WAThrowable: Error and exception base class.                     |
+| WAThrowable: Error and exception trait.                          |
 |------------------------------------------------------------------|
-| - $trace: string                                                 |
-| + $message: string                                               |
 |------------------------------------------------------------------|
-| + new Throwable($message: string)                                |
 | + __toString(): string                                           |
 |------------------------------------------------------------------|
 @End_UML_Box */
@@ -57,7 +54,7 @@ EOF;
     $error = "ERROR: {$message}".PHP_EOL."THROWN: {$this->file} ({$this->line})".PHP_EOL."TRACE:".PHP_EOL;
     foreach($this->getTrace() as $k => $t)
     {
-      if ($k) // we dont write 1rst errror since it is where we threw the object
+      if ($k) // we dont write 1rst error since it is where we threw the object
         $error .= (isset($t['file'])?$t['file']:'No file').' ('.(isset($t['line'])?$t['line']:'No line').') :: calling '.(isset($t['class'])?$t['class']:'').(isset($t['type'])?$t['type']:'').(isset($t['function'])?$t['function']:'No function').PHP_EOL;
     }
     return $error;

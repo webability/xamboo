@@ -25,6 +25,7 @@ Creation: 2012-09-23
 Changes:
   2015-07-19 Phil: Added PARAM metaword for simple pages to understand CALL syntax with named parameters.
   2015-04-21 Phil: documentation, comments
+  2018-01-02 Phil: modified to support multilanguage codes and sysparams
 
 @End_DESCR */
 
@@ -52,7 +53,7 @@ class XBCode extends \core\WAClass
     $this->code = XBCode::compile($data);
   }
 
-  public function run($engine, $params)
+  public function run($engine, $params, $method, $language = null)
   {
     $text = $this->code['content'];
     foreach($this->code['elements'] as $item => $element)
@@ -75,7 +76,7 @@ class XBCode extends \core\WAClass
           $data = 'link to ' . $element['id'];
           break;
         case 5: // sysparam
-          $data = 'sysparam ' . $element['param'];
+          $data = $this->base->config->{$element['param']};
           break;
         case 6: // clientparam
           $data = 'clientparam ' . $element['param'];
@@ -105,6 +106,7 @@ class XBCode extends \core\WAClass
             $this->PHPExec = new PHPExec($this, $engine);
           $this->PHPExec->setCode($element['code']);
           $this->PHPExec->setCatch($element['catch']);
+          $this->PHPExec->setLanguage($language);
           $data = $this->PHPExec->execute();
           break;
         case 14: // block
@@ -118,6 +120,11 @@ class XBCode extends \core\WAClass
           break;
         case 20: // global response variable
           $data = $this->base->HTTPResponse->getVariable($element['param']);
+          break;
+        case 30: // language
+          $data = '##'.$element['param'].'##';
+          if ($language)
+            $data = $language->getEntry($element['param']);
           break;
       }
       $text = str_replace('__'.$item.'__', $data, $text);
@@ -168,8 +175,11 @@ class XBCode extends \core\WAClass
       '|\[\[(BLO)CK\,(.*?)(\:(.*?)){0,1}\]\]'.                                            // index based 31
       '|\[\[(CA)LL\,(.*?)(\:(.*?)){0,1}\]\]'.                                             // index based 35
 
+      // ==== LANGUAGE
+      '|(#)#(.*?)##'.                                                                     // index based 39
+
       // ==== COMENTS
-      '|(%)--(.*?)--%'.                                                                   // index based 39
+      '|(%)--(.*?)--%'.                                                                   // index based 41
 
       '/s';
 
@@ -183,7 +193,7 @@ class XBCode extends \core\WAClass
       while (list($k, $E) = each($result[0]))
       {
         $pos = strpos($TEXT, $E);
-        if ($result[39][$k] == '%') // invalidate any comment
+        if ($result[41][$k] == '%') // invalidate any comment
           $TEXT = substr_replace($TEXT, '', $pos, strlen($E));
         else
           $TEXT = substr_replace($TEXT, '__'.$item.'__', $pos, strlen($E));
@@ -260,6 +270,9 @@ class XBCode extends \core\WAClass
           $data = explode(',', $result[36][$k]);
           $elements[$item++] = array('type' => 16, 'id' => $data[0], 'version' => isset($data[1])?$data[1]:null, 'language' => isset($data[2])?$data[2]:null, 'params' => $params);
         }
+        if ($result[39][$k] == '#') // language
+          $elements[$item++] = array('type' => 30, 'param' => $result[40][$k]);
+        
       }
     }
 

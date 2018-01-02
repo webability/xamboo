@@ -24,6 +24,9 @@ Changes:
   2015-07-23 Phil: First release
   2015-08-13 Phil: Added reserved words interpretation (yes, true, no, none, null, etc)
   2015-08-13 Phil: Added ';' as comment
+  2017-01-27 Phil: Added (public) this->NEWLINE to print the content of the object
+  2017-01-27 Phil: Added sub object level with a point to save and compile the config code
+  2018-01-02 Phil: Error corrected on NEWLINE static string
 
 @End_DESCR */
 
@@ -31,7 +34,8 @@ namespace xconfig;
 
 class XConfig implements \ArrayAccess, \Iterator, \Countable
 {
-  const VERSION = '2.0.1';
+  const VERSION = '2.0.2';
+  public static $NEWLINE = "<br />\n";
   protected $entries = array();
 
   /* The constructor receive a data, that may be a string (to be compiled) or an array of param => value
@@ -220,14 +224,34 @@ class XConfig implements \ArrayAccess, \Iterator, \Countable
         $value = true;
       if (in_array($value, array('false', 'no', 'off', 'none'), true))
         $value = false;
-      if (!isset($lines[$param]))
-        $lines[$param] = $value;
+      
+      if (($p = strpos($param, '.')) !== false)
+      {
+        $param1 = substr($param, 0, $p);
+        $param2 = substr($param, $p+1);
+        if (!isset($lines[$param1]))
+          $lines[$param1] = array($param2 => $value);
+        elseif (!isset($lines[$param1][$param2]))
+          $lines[$param1][$param2] = $value;
+        else
+        {
+          if (!is_array($lines[$param1][$param2]))
+            $lines[$param1][$param2] = array($lines[$param1][$param2], $value);
+          else
+            $lines[$param1][$param2][] = $value;
+        }
+      }
       else
       {
-        if (!is_array($lines[$param]))
-          $lines[$param] = array($lines[$param], $value);
+        if (!isset($lines[$param]))
+          $lines[$param] = $value;
         else
-          $lines[$param][] = $value;
+        {
+          if (!is_array($lines[$param]))
+            $lines[$param] = array($lines[$param], $value);
+          else
+            $lines[$param][] = $value;
+        }
       }
     }
     return $lines;
@@ -239,17 +263,15 @@ class XConfig implements \ArrayAccess, \Iterator, \Countable
     $text = '';
     foreach($data as $k => $v)
     {
-      $text .= $k . '=';
       if (is_array($v))
       {
-        $text .= '[';
-        $first = 0;
-        foreach($v as $vx)
-          $text .= (($first++)?',':'') . (is_bool($vx)?($vx?'true':'false'):$vx);
-        $text .= ']' . "<br />\n";
+        foreach($v as $p => $vx)
+        {
+          $text .= $k . '.' . $p . '=' . (is_bool($vx)?($vx?'true':'false'):$vx) . self::$NEWLINE;
+        }
       }
       else
-        $text .= (is_bool($v)?($v?'true':'false'):$v) . "<br />\n";
+        $text .= $k . '=' . (is_bool($v)?($v?'true':'false'):$v) . self::$NEWLINE;
     }
     return $text;
   }

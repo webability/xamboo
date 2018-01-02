@@ -3,7 +3,7 @@
 /*
     LanguageSource.lib, DomCore, the WebAbility(r) Core System
     Contains the language 3-level cache access object
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -61,7 +61,7 @@ class LanguageSource extends DataSource
     parent::__construct(null);
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/LanguageSource->__construct($originsource, $fastobjectsource)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/LanguageSource->__construct($originsource, $fastobjectsource)", \core\WADebug::SYSTEM);
     $this->originsource = $originsource;
     $this->fastobjectsource = $fastobjectsource;
   }
@@ -69,7 +69,7 @@ class LanguageSource extends DataSource
   public function isValid()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/LanguageSource->isValid()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/LanguageSource->isValid()', \core\WADebug::SYSTEM);
 
     $this->tm1 = $this->originsource->getTimeStamp();
     $this->tm2 = $this->fastobjectsource?$this->fastobjectsource->getTimeStamp():0;
@@ -81,14 +81,14 @@ class LanguageSource extends DataSource
   public function getTimeStamp()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/LanguageSource->getTimeStamp()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/LanguageSource->getTimeStamp()', \core\WADebug::SYSTEM);
     return $this->fastobjectsource?$this->fastobjectsource->getTimeStamp():0;
   }
 
   public function write($data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/LanguageSource->write($data)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/LanguageSource->write($data)", \core\WADebug::SYSTEM);
 
     $this->originsource->write($data);
     if ($this->fastobjectsource)
@@ -101,7 +101,7 @@ class LanguageSource extends DataSource
   public function read()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/LanguageSource->read()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/LanguageSource->read()', \core\WADebug::SYSTEM);
 
     // datasource exists ?      
     if (!$this->originsource->isValid())
@@ -135,7 +135,7 @@ class LanguageSource extends DataSource
   public function unlink()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasource/LanguageSource->unlink()', WADebug::SYSTEM);
+      $this->doDebug('include/datasource/LanguageSource->unlink()', \core\WADebug::SYSTEM);
     $this->originsource->unlink();
     if ($this->fastobjectsource)
       $this->fastobjectsource->unlink();

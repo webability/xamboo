@@ -3,7 +3,7 @@
 /*
     __autoload.lib, DomCore, the WebAbility(r) Core System
     Contains the auto class loader for PHP
-    (c) 2010 Philippe Thomassigny
+    (c) 2008-2016 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -27,6 +27,13 @@ $BASEDIR = '../';
 function XBautoload($classname)
 {
   global $BASEDIR;
+
+  // Special incompatibility PHP <= 5.2 no traits
+  if (($classname == 'core\WAError' || $classname == 'core\WAException') && PHP_VERSION_ID < 50400)
+  {
+    include_once $BASEDIR . 'include/'.str_replace('\\', '/', $classname)."NT.lib";
+    return;
+  }
 
   if (is_file($BASEDIR . 'include/'.str_replace('\\', '/', $classname).".lib"))
   {

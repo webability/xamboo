@@ -3,7 +3,7 @@
 /*
     WASHM.lib, DomCore, the WebAbility(r) Core System
     Contains the shared memory manager class to access resident memory variables
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -19,6 +19,10 @@
 
     You should have received a copy of the GNU General Public License
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+    
+Changes:
+  2015-11-16: Phil, Rewrite the library to be fast, use implicit var mapper and only give support for files (for AFO cache files from datasources). The variables mapper is still available but under specific conditions and optinos.
+
 */
 
 /* @UML_Box -- Do not edit
@@ -51,10 +55,6 @@
 |------------------------------------------------------------------|
 |------------------------------------------------------------------|
 @End_UML_Box */
-
-/*
-  2015-11-16: Phil, Rewrite the library to be fast, use implicit var mapper and only give support for files (for AFO cache files from datasources). The variables mapper is still available but under specific conditions and optinos.
-*/
 
 namespace core;
 
@@ -187,6 +187,7 @@ class WASHM extends WADebug
     if (self::$debug || $this->localdebug)
       $this->doDebug("include/core/WASHM->write(%, %)", WADebug::SYSTEM, $id, $data);
 
+    $id = trim($id); // no spaces tab enter etc allowed
     $this->attach();
     $link = $this->getlink($id, 'w');
     if ($link)
@@ -212,6 +213,7 @@ class WASHM extends WADebug
     if (self::$debug || $this->localdebug)
       $this->doDebug("include/core/WASHM->read(%)", WADebug::SYSTEM, $id);
 
+    $id = trim($id); // no spaces tab enter etc allowed
     $this->attach();
     $var = null;
     $link = $this->getlink($id, 'r');
@@ -234,6 +236,7 @@ class WASHM extends WADebug
     if (self::$debug || $this->localdebug)
       $this->doDebug("include/core/WASHM->delete(%)", WADebug::SYSTEM, $id);
 
+    $id = trim($id); // no spaces tab enter etc allowed
     $this->attach();
     $link = $this->getlink($id, 'd');
     if ($link)
@@ -252,6 +255,7 @@ class WASHM extends WADebug
       $this->doDebug("include/core/WASHM->lastread(%)", WADebug::SYSTEM, $id);
     if (!$this->mapped)
       return null;
+    $id = trim($id); // no spaces tab enter etc allowed
     $this->attach();
     $link = $this->getlink($id, null);
     $this->detach();
@@ -266,6 +270,7 @@ class WASHM extends WADebug
       $this->doDebug("include/core/WASHM->lastwrite(%)", WADebug::SYSTEM, $id);
     if (!$this->mapped)
       return null;
+    $id = trim($id); // no spaces tab enter etc allowed
     $this->attach();
     $link = $this->getlink($id, null);
     $this->detach();

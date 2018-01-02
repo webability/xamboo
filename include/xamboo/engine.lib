@@ -34,6 +34,12 @@ Changes:
   2015-04-21 Phil: documentation, comments
   2015-04-22 Phil: Added declaration of 4 basic types of pages and the posibility to add new types
   2015-11-17 Phil: Compatibility with PHP7, namespaces added
+  2017-04-10 Phil: Buf corrected in registerPageType: the type was not be used correctly to add the server definition to the list
+  2017-04-20 Phil: Recursivity protection added
+  2017-04-20 Phil: Recursivity depth protection added (global maxrecursion=N parameter),
+                   and global/local acceptpathparameters=yes/no implemented in .page
+  2017-11-18 Phil: Added support for multilanguage entries into library server (.lib)
+  2018-01-02 Phil: Added support for multilanguage entries into single pages server (.code)
 
 @End_DESCR */
 
@@ -49,7 +55,7 @@ namespace xamboo;
 
 class engine extends \core\WAClass
 {
-  const VERSION = '3.0.2';
+  const VERSION = '3.0.5';
 
   public $URI = '';
   public $maincontext;
@@ -59,6 +65,7 @@ class engine extends \core\WAClass
       'simple' => array(
           'type' => 'server',
           'server' => '\xamboo\XBCodeServer',
+          'language' => true,
           'run' => true
         ),
       'library' => array(
@@ -83,14 +90,14 @@ class engine extends \core\WAClass
     parent::__construct();
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("xamboo/engine->__construct(%)", WADebug::SYSTEM, $URI);
+      $this->doDebug("xamboo/engine->__construct(%)", \core\WADebug::SYSTEM, $URI);
       
     $this->URI = $URI;
   }
 
   public function registerPageType($type, $definition)
   {
-    $this->pagetypes['$type'] = $definition;
+    $this->pagetypes[$type] = $definition;
   }
   
   // $P is the page id, $context is null for main page call, 1 for inner pages (blocks), 2 for outer pages (templates)
@@ -99,7 +106,7 @@ class engine extends \core\WAClass
   public function run($P, $context = null, $params = null, $version = null, $language = null, $method = null)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("xamboo/engine->run(%, %, %)", WADebug::SYSTEM, $P, $context, $params);
+      $this->doDebug("xamboo/engine->run(%, %, %)", \core\WADebug::SYSTEM, $P, $context, $params);
 
     if (!$P)
       $P = $this->base->mainpage;
@@ -124,6 +131,8 @@ class engine extends \core\WAClass
         return $this->launchError($context, $originalP, 'Error: the page '.$originalP.' does not exist', 'Error: the block '.$originalP.' does not exist');
       }
     }
+    if (!$page->acceptpathparameters && $P != $originalP)
+      return $this->launchError($context, $originalP, 'Error: the page '.$originalP.' does not exist', 'Error: the block '.$originalP.' does not exist');
     
     if (!$context) // page called by URI
     {
@@ -196,6 +205,12 @@ class engine extends \core\WAClass
       // No instance at all, error
       return $this->launchError($context, $P, 'Error: the page '.$P.' has no instance', 'Error: the block '.$P.' has no instance');
     }
+    if ($this->verifyrecursion($P))
+    {
+      // No instance at all, error
+      return $this->launchError($context, $P, 'Error: the page '.$page.' is recursive', 'Error: the block '.$page.' is recursive');
+    }
+      
 
     $this->pushcontext($context, $originalP, $P, $page, $instance, $params, $version, $language);
 
@@ -276,8 +291,17 @@ class engine extends \core\WAClass
         }
         if ($code)
         {
+          $language = null;
+          if ($this->pagetypes[$page->type]['language'])
+          {
+            foreach($identities as $id => $data)
+            {
+              $language = XBLanguageServer::getInstance($P.$id)->read();
+              if ($language) break;
+            }
+          }
           if ($this->pagetypes[$page->type]['run'])
-            $text = $code->run($this, $params, $method);
+            $text = $code->run($this, $params, $method, $language);
           else
             $text = $code;
         }
@@ -317,6 +341,7 @@ class engine extends \core\WAClass
         $libname = '\\'.str_replace(array('-'), '_', $uid);
         $pagelib = new $libname($template, $language);
         $text = $pagelib->run($this, $params, $method);
+        $text = $pagelib->applyLanguage($text);
       }
     }
 
@@ -368,11 +393,25 @@ class engine extends \core\WAClass
     $this->currentcontext = array_shift($this->historycontext);
   }
 
+  private function verifyrecursion($P)
+  {
+    // ******** IMPLEMENT A MAX RECURSION LEVEL
+    $maxr = $this->base->config->maxrecursion?$this->base->config->maxrecursion:1;
+    $numr = 0;
+    foreach($this->historycontext as $context)
+    {
+      if ($context['pageid'] == $P && ++$numr >= $maxr)
+        return true;
+    }
+    return false;
+  }
+  
   private function isAvailable($page, $context)
   {
     if (!$page || !isset($page->status) || !$page->status || $page->status == 'hidden')
       return false;
   
+    // ******* WE SHOULD CHECK THE NEW PARAMETER ACCEPT PARAMS (i.e  /aaa/bbb/ccc after page)
     // common checks
     switch($context)
     {

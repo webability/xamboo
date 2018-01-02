@@ -24,6 +24,7 @@ along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
 Creation: 2012-09-23
 Changes:
   2015-04-21 Phil: documentation, comments
+  2017-04-21 Phil: Compilation of params with XConfig::compile, not anymore with XBCompiler
 
 @End_DESCR */
 
@@ -65,7 +66,7 @@ class XBInstance extends \core\WAClass implements \ArrayAccess, \Iterator, \Coun
   public function __set($name, $val)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/common/XBInstance->__set( $name, $val )", WADebug::SYSTEM);
+      $this->doDebug("include/common/XBInstance->__set( $name, $val )", \core\WADebug::SYSTEM);
 
     $this->entries[$name] = $val;
     return $this;
@@ -79,7 +80,7 @@ class XBInstance extends \core\WAClass implements \ArrayAccess, \Iterator, \Coun
   public function __unset($name)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/common/XBInstance->__unset( $name )", WADebug::SYSTEM);
+      $this->doDebug("include/common/XBInstance->__unset( $name )", \core\WADebug::SYSTEM);
 
     unset($this->entries[$name]);
   }
@@ -147,7 +148,7 @@ class XBInstance extends \core\WAClass implements \ArrayAccess, \Iterator, \Coun
   public function setArray($array)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/common/XBInstance->setArray( $array )", WADebug::SYSTEM);
+      $this->doDebug("include/common/XBInstance->setArray( $array )", \core\WADebug::SYSTEM);
 
     foreach($array as $k => $v)
       $this->entries[$k] = $v;
@@ -171,7 +172,7 @@ class XBInstance extends \core\WAClass implements \ArrayAccess, \Iterator, \Coun
 
   static function compile($data)
   {
-    return XBCompiler::compileLines($data);
+    return \xconfig\XConfig::compile($data);
   }
   
   static function create($data)

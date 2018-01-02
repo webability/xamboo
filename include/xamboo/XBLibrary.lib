@@ -23,7 +23,8 @@ along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
 Creation: 2012-09-23
 Changes:
   2015-04-21 Phil: documentation, comments
-
+  2017-11-18 Phil: add method applyLanguage
+  2018-01-02 Phil: add attribute languageapplied to not parse twice the language entries
 */
 
 /* @UML_Box
@@ -43,6 +44,7 @@ class XBLibrary extends \core\WAObject
 {
   protected $template;
   protected $language;
+  private $languageapplied = false;
 
   public function __construct($template, $language)
   {
@@ -53,9 +55,27 @@ class XBLibrary extends \core\WAObject
 
   public function run($engine, $params)
   {
-    if ($this->template instanceof WATemplate)
-      return $this->template->resolve();
+    if ($this->template instanceof \core\WATemplate)
+    {
+      $code = $this->template->resolve();
+      return $this->applyLanguage($code);
+    }
     return 'La libreria no esta sobrecargando el método run(). Favor de completar la libreria.';
+  }
+
+  public function applyLanguage($code)
+  {
+    // the engine calls us again, and the main run may call us too.
+    if ($this->languageapplied)
+      return $code;
+
+    if ($this->language instanceof \core\WALanguage)
+    {
+      foreach($this->language as $k => $l)
+        $code = str_replace('##'.$k.'##', $l, $code);
+    }
+    $this->languageapplied = true;
+    return $code;
   }
 
   public function __toString()

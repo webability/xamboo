@@ -2,7 +2,7 @@
 
 Xamboo v3
 =============================
-This is the build 003
+This is the build 005
 
 [![Build Status](https://travis-ci.org/webability/xamboo.svg?branch=master)](https://travis-ci.org/webability/xamboo)
 
@@ -19,12 +19,31 @@ Translations are also welcome.
 Version Changes Control
 =======================
 
-V3.0.3 - 2016-??
+V3.0.5 - 2018-01-02
+-----------------------
+> Uses CORE 3.0.8
+> Uses XConfig 2.0.2
+- Added the support for multilanguage to a single page server (.code), with language entry like ##id##
+- Added the attribute languageapplied into XBLibrary to not parse twice the language entries
+- XBCode modified to support multilanguage and correct use of sysparams
+- PHPExec modified to support multilanguage
+- HTTPRequest modified to avoid warnings on REMOTE_ADDR and REQUEST_METHOD: they are not always present (in CLI for instance)
+
+V3.0.4 - 2017-11-18
+-----------------------
+> Uses CORE 3.0.3
+> Uses XConfig 2.0.1
+- Added the method applyLanguage in XBLibrary
+
+V3.0.3 - 2017-04-21
 -----------------------
 > Uses CORE 3.0.3
 > Uses XConfig 2.0.1
 - Rewrite the __autoload to be SPL compliant
 - Implementation of testunit on travis
+- Remove XBCompiler and uses now XConfig::compile (in Base_Engine, XBPage, XBInstance
+- Added recursivity check and protection in the engine
+- Added flag to accept or not the use of parameters in path
 
 V3.0.2 - 2016-01-26
 -----------------------

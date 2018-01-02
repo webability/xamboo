@@ -24,6 +24,7 @@ along with Xamboo.  If not, see <http://www.gnu.org/licenses/>.
 Creation: 2010-03-01
 Changes:
   2015-04-21: Phil, documentation, comments
+  2017-04-10: Phil, javascript caller variable is now 'js' instead of 'JS'
 
 @End_DESCR */
 
@@ -56,7 +57,7 @@ class HTTPResponse extends \core\WAClass
     parent::__construct();
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("xamboo/HTTPResponse->__construct()", WADebug::SYSTEM);
+      $this->doDebug("xamboo/HTTPResponse->__construct()", \core\WADebug::SYSTEM);
   }
 
   public function setResponseCode($code)
@@ -134,7 +135,7 @@ class HTTPResponse extends \core\WAClass
       $t .= ($item++?',':'') . $c;
     }
     if ($item)
-      $js .= "<script language=\"javascript\" type=\"text/javascript\" src=\"/$JSPHP?JS={$t}&amp;".time()."\"></script>\n";
+      $js .= "<script language=\"javascript\" type=\"text/javascript\" src=\"/$JSPHP?js={$t}&amp;".time()."\"></script>\n";
     return $js;
   }
 

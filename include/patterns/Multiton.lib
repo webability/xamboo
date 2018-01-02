@@ -3,7 +3,7 @@
 /*
     Multiton.lib, DomCore, the WebAbility(r) Core System
     Contains the multiton pattern class
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -30,7 +30,7 @@
 |------------------------------------------------------------------|
 | + new Multiton($parameter: mixed)                                |
 | + ::getInstance($parameter: mixed, $class: string)               |
-| + __clone()                                                      |
+| + __clone() error thrown                                         |
 |------------------------------------------------------------------|
 @End_UML_Box */
 

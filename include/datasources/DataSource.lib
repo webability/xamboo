@@ -3,7 +3,7 @@
 /*
     DataSource.lib, DomCore, the WebAbility(r) Core System
     Contains the basic data access object
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -49,7 +49,7 @@ class DataSource extends \core\WAObject
   {
     parent::__construct();
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/DataSource->__construct($data)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/DataSource->__construct($data)", \core\WADebug::SYSTEM);
     if ($data)
     {
       $this->data = $data;
@@ -60,28 +60,28 @@ class DataSource extends \core\WAObject
   public function isValid()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/DataSource->isValid()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/DataSource->isValid()', \core\WADebug::SYSTEM);
     return !!$this->timestamp;
   }
 
   public function getTimeStamp()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/DataSource->getTimeStamp()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/DataSource->getTimeStamp()', \core\WADebug::SYSTEM);
     return $this->timestamp;
   }
 
   public function read()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/DataSource->read()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/DataSource->read()', \core\WADebug::SYSTEM);
     return $this->data;
   }
 
   public function write($data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/DataSource->write($data)", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/DataSource->write($data)", \core\WADebug::SYSTEM);
     $this->data = $data;
     $this->timestamp = microtime(true);
   }
@@ -89,7 +89,7 @@ class DataSource extends \core\WAObject
   public function unlink()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/DataSource->unlink()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/DataSource->unlink()', \core\WADebug::SYSTEM);
     $this->data = null;
     $this->timestamp = null;
   }

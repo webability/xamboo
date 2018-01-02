@@ -3,7 +3,7 @@
 /*
     WADebug.lib, DomCore, the WebAbility(r) Core System
     Contains the semi static object to give debug capabilities to all classes
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -22,6 +22,7 @@
     
     Changes:
     2015-06-09: Phil, add self::$debug to null, to protect the setDebug if used before the first instanciation
+    2017-01-31: Phil, version change: adjustments on \Error, \Exception and throwable trait not capturable
 */
 
 /* @UML_Box
@@ -37,7 +38,7 @@
 | ! FILEREDIR : 3                                                  |
 | ! WINDOWS : 1                                                    |
 | ! UNIX : 2                                                       |
-| ! MAX : 3                                                        |
+| ! MAC : 3                                                        |
 | - ::numtotalinstances : integer                                  |
 | - ::numinstances : array                                         |
 | - uidinstance : integer                                          |
@@ -85,7 +86,7 @@ namespace core;
 class WADebug
 {
   // DomCore version
-  const VERSION = '3.0.3';
+  const VERSION = '3.0.8';
 
   // All the functions entry
   const SYSTEM = 1;

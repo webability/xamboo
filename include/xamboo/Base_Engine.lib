@@ -26,6 +26,7 @@ Changes:
   2015-04-21: Phil, documentation, comments
   2015-04-21: Phil, removed config params that were not used
   2015-04-22: Phil, added HISTORY and HISTORYDIR parameters to keep the history of changes
+  2017-04-21: Phil, Compilation of params with XConfig::compile, not anymore with XBCompiler
 
 @End_DESCR */
 
@@ -77,11 +78,12 @@ class Base_Engine extends \core\WABase
     parent::__construct();
 
     if (self::$debug || $this->localdebug)
-      $this->doDebug("xamboo/Base_Engine->__construct(%)", WADebug::SYSTEM, $config);
+      $this->doDebug("xamboo/Base_Engine->__construct(%)", \core\WADebug::SYSTEM, $config);
     
     // if $config is not an array but a string, we parse it
-    if (!is_array($config) && is_string($config))
-      $config = XBCompiler::compileLines($config);
+    if (is_string($config))
+      $config = \xconfig\XConfig::compile($config);
+    $this->config = $config;
 
     // basic engine config
     // Mandatory parameters: (if this parameter is not set, will search the pages on the local dir, 

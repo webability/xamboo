@@ -3,7 +3,7 @@
 /*
     WALanguageCompiler.lib, DomCore, the WebAbility(r) Core System
     Contains the basic class to compile an XML language file to a readable PHP array
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -19,6 +19,10 @@
 
     You should have received a copy of the GNU General Public License
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+    
+Changes:
+  2017-04-16: Phil, use of the children node for the compiled language XML (to match changes into WASimpleXML)
+  2018-02-01: Phil, the data portion of an entry may come undefined (if the XML tag is empty, to avoid a PHP warning)
 */
 
 /* @UML_Box
@@ -50,11 +54,12 @@ class WALanguageCompiler
     {
       self::$id = $tree['attributes']['id'];
       self::$lang = $tree['attributes']['lang'];
-      foreach ($tree as $k => $value)
+      if (isset($tree['children']))
       {
-        if ($k === 'tag' || $k === 'attributes')
-          continue;
-        $TM[$value['attributes']['id']] = $value['data'];
+        foreach ($tree['children'] as $k => $value)
+        {
+          $TM[$value['attributes']['id']] = isset($value['data'])?$value['data']:'';
+        }
       }
     }
     return $TM;

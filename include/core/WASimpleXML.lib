@@ -3,7 +3,7 @@
 /*
     WASimpleXML.lib, DomCore, the WebAbility(r) Core System
     Contains the basic class to compile any XML to a readable PHP array
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -19,6 +19,9 @@
 
     You should have received a copy of the GNU General Public License
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+    
+Changes:
+  2017-04-16: Phil, the children subnodes of a node are now into the 'children' array entry
 */
 
 /* @UML_Box
@@ -66,7 +69,7 @@ class WASimpleXML
     // 2. the children
     foreach ($xml->children() as $name => $value)
     {
-      $node[] = self::convert($value);
+      $node['children'][] = self::convert($value);
     }
 
     // 3. the content data

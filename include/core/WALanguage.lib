@@ -3,7 +3,7 @@
 /*
     WALanguage.lib, DomCore, the WebAbility(r) Core System
     Contains the basic class to contains a language table
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -19,6 +19,9 @@
 
     You should have received a copy of the GNU General Public License
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
+    
+    History:
+    2017-02-03: Phil, add implementation of array access, countable, iterable, object access magic functions 
 */
 
 /* @UML_Box
@@ -46,10 +49,22 @@
 |------------------------------------------------------------------|
 @End_UML_Box */
 
+/*
+class to compile and keep a Language set of entries
+A language source file is an XML file:
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<language id="file_id" lang="language_id">
+  <entry id="entry_id"><![CDATA[translation into the language of the entry]]></entry>
+  ...
+</language>
+
+*/
+
 namespace core;
 
 // Class to manage language table
-class WALanguage extends WAClass implements \Iterator
+class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
 {
   protected $id = '';
   protected $lang = '';
@@ -119,6 +134,52 @@ class WALanguage extends WAClass implements \Iterator
     return $id;
   }
 
+  // magic functions implements
+  public function __get($name)
+  {
+    if (isset($this->entries[$name]))
+      return $this->entries[$name];
+    return null;
+  }
+
+  public function __set($name, $val)
+  {
+    $this->entries[$name] = $val;
+    return $this;
+  }
+
+  public function __isset($name)
+  {
+    return isset($this->entries[$name]);
+  }
+
+  public function __unset($name)
+  {
+    unset($this->entries[$name]);
+  }
+  
+  // ArrayAccess implemented
+  public function offsetSet($offset, $value)
+  {
+    if ($offset)
+      $this->entries[$offset] = $value;
+  }
+
+  public function offsetExists($offset)
+  {
+    return isset($this->entries[$offset]);
+  }
+
+  public function offsetUnset($offset)
+  {
+    unset($this->entries[$offset]);
+  }
+
+  public function offsetGet($offset)
+  {
+    return isset($this->entries[$offset]) ? $this->entries[$offset] : null;
+  }
+ 
   // Iterator implemented
   public function rewind()
   {
@@ -145,6 +206,13 @@ class WALanguage extends WAClass implements \Iterator
     return key($this->entries) !== null;
   }
 
+  // Countable implemented
+  public function count()
+  {
+    return count($this->entries);
+  }
+
+  // serialization
   protected function serial(&$data)
   {
     $data['id'] = $this->id;

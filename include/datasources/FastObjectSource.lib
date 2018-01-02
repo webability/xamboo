@@ -3,7 +3,7 @@
 /*
     FastObjectSource.lib, DomCore, the WebAbility(r) Core System
     Contains the Fast Object 2-level access
-    (c) 2008-2012 Philippe Thomassigny
+    (c) 2008-2017 Philippe Thomassigny
 
     This file is part of DomCore
 
@@ -58,7 +58,7 @@ class FastObjectSource extends DataSource
   {
     parent::__construct(null);
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/FastObjectSource->__construct(%, %)", WADebug::SYSTEM, $datasource, $shmsource);
+      $this->doDebug("include/datasources/FastObjectSource->__construct(%, %)", \core\WADebug::SYSTEM, $datasource, $shmsource);
 
     $this->datasource = $datasource;
     $this->shmsource = $shmsource;
@@ -67,7 +67,7 @@ class FastObjectSource extends DataSource
   public function isValid()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/FastObjectSource->isValid()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/FastObjectSource->isValid()', \core\WADebug::SYSTEM);
 
     $this->tm1 = $this->datasource->getTimeStamp();
     $this->tm2 = ($this->shmsource?$this->shmsource->getTimeStamp():$this->tm1);
@@ -80,7 +80,7 @@ class FastObjectSource extends DataSource
   public function getTimeStamp()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/FastObjectSource->getTimeStamp()", WADebug::SYSTEM);
+      $this->doDebug("include/datasources/FastObjectSource->getTimeStamp()", \core\WADebug::SYSTEM);
     if ($this->shmsource)
       return $this->shmsource->getTimeStamp();
     return $this->datasource->getTimeStamp();
@@ -89,7 +89,7 @@ class FastObjectSource extends DataSource
   public function write($data)
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug("include/datasources/FastObjectSource->write(%)", WADebug::SYSTEM, $data);
+      $this->doDebug("include/datasources/FastObjectSource->write(%)", \core\WADebug::SYSTEM, $data);
 
     $this->datasource->write(serialize($data));
     if($this->shmsource)
@@ -101,7 +101,7 @@ class FastObjectSource extends DataSource
   public function read()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasources/FastObjectSource->read()', WADebug::SYSTEM);
+      $this->doDebug('include/datasources/FastObjectSource->read()', \core\WADebug::SYSTEM);
 
     // datasource exists ?      
     if (!$this->datasource->isValid())
@@ -142,7 +142,7 @@ class FastObjectSource extends DataSource
   public function unlink()
   {
     if (self::$debug || $this->localdebug)
-      $this->doDebug('include/datasource/FastObjectSource->unlink()', WADebug::SYSTEM);
+      $this->doDebug('include/datasource/FastObjectSource->unlink()', \core\WADebug::SYSTEM);
     $this->datasource->unlink();
     if ($this->shmsource)
       $this->shmsource->unlink();
