@@ -25,6 +25,7 @@ V3.0.5 - 2018-01-02
 > Uses XConfig 2.0.2
 - Added the support for multilanguage to a single page server (.code), with language entry like ##id##
 - Added the attribute languageapplied into XBLibrary to not parse twice the language entries
+- XBRESTLibrary modified to be extended from XBLibrary to use multilanguage support
 - XBCode modified to support multilanguage and correct use of sysparams
 - PHPExec modified to support multilanguage
 - HTTPRequest modified to avoid warnings on REMOTE_ADDR and REQUEST_METHOD: they are not always present (in CLI for instance)

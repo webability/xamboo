@@ -44,7 +44,7 @@ class XBLibrary extends \core\WAObject
 {
   protected $template;
   protected $language;
-  private $languageapplied = false;
+  protected $languageapplied = false;
 
   public function __construct($template, $language)
   {
