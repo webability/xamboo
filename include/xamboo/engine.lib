@@ -158,6 +158,7 @@ class engine extends \core\WAClass
     $version = $version?$version:($page->defaultversion?$page->defaultversion:$this->base->Version);
     $language = $language?$language:($page->defaultlanguage?$page->defaultlanguage:$this->base->Language);
     $identities = array($skin . '.' . $version . '.' . $language => array('version' => $version, 'language' => $language));
+    $identities[$skin . '.' . $version . '.' . $this->base->DefaultLanguage] = array('version' => $version, 'language' => $this->base->DefaultLanguage);
     $version2 = $page->defaultversion?$page->defaultversion:$this->base->Version;
     $language2 = $page->defaultlanguage?$page->defaultlanguage:$this->base->Language;
     $i2 = $skin . '.'.$version2 . '.' . $language2;
@@ -173,11 +174,14 @@ class engine extends \core\WAClass
     if ($skin)
     {
       $i5 = '.'.$version . '.' . $language;
+      $i51 = '.'.$version . '.' . $this->base->DefaultLanguage;
       $i6 = '.'.$version2 . '.' . $language2;
       $i7 = '.'.$this->base->Version . '.' . $this->base->Language;
       $i8 = '.'.$this->base->DefaultVersion . '.' . $this->base->DefaultLanguage;
       if (!isset($identities[$i5]))
         $identities[$i5] = array('version' => $version, 'language' => $language);
+      if (!isset($identities[$i51]))
+        $identities[$i51] = array('version' => $version, 'language' => $this->base->Language);
       if (!isset($identities[$i6]))
         $identities[$i6] = array('version' => $version2, 'language' => $language2);
       if (!isset($identities[$i7]))

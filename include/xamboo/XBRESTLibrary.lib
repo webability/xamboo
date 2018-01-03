@@ -47,7 +47,7 @@ class XBRESTLibrary extends XBLibrary
     parent::__construct($template, $language);
   }
 
-  public function run($engine, $params, $method)
+  public function run($engine, $params, $method = null)
   {
     switch($method)
     {
