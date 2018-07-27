@@ -20,9 +20,10 @@
     You should have received a copy of the GNU General Public License
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
     
-Changes:
-  2017-04-16: Phil, use of the children node for the compiled language XML (to match changes into WASimpleXML)
-  2018-02-01: Phil, the data portion of an entry may come undefined (if the XML tag is empty, to avoid a PHP warning)
+    History:
+    2017-04-16: Phil, use of the children node for the compiled language XML (to match changes into WASimpleXML)
+    2018-02-01: Phil, the data portion of an entry may come undefined (if the XML tag is empty, to avoid a PHP warning)
+    2018-03-25: Phil, add implementation of attributes for each entry
 */
 
 /* @UML_Box
@@ -65,12 +66,38 @@ class WALanguageCompiler
     return $TM;
   }
 
-  public static function create($id, $language, $data)
+  public static function compileAttributes($buffer)
+  {
+    $TM = array();
+    $tree = WASimpleXML::compile($buffer);
+    if (isset($tree['tag']) && $tree['tag'] === 'language')
+    {
+      if (isset($tree['children']))
+      {
+        foreach ($tree['children'] as $k => $value)
+        {
+          $TM[$value['attributes']['id']] = $value['attributes'];
+        }
+      }
+    }
+    return $TM;
+  }
+
+  public static function create($id, $language, $data, $attributes = null)
   {
     $text = '<?xml version="1.0" encoding="UTF-8" ?>'.PHP_EOL.
             '<language id="'.$id.'" lang="'.$language.'">'.PHP_EOL;
     foreach ($data as $id => $val)
-      $text .= '  <entry id="'.$id.'"><![CDATA['.$val.']]></entry>'.PHP_EOL;
+    {
+      $attr = '';
+      if ($attributes && isset($attributes[$id]))
+        foreach($attributes[$id] as $a => $v)
+        {
+          if ($a == 'id') continue; // id is build by hand
+          $attr .= ' ' . $a . '="' . $v . '"';
+        }
+      $text .= '  <entry id="'.$id.'"'.$attr.'><![CDATA['.$val.']]></entry>'.PHP_EOL;
+    }
     $text .= '</language>'.PHP_EOL;
     return $text;
   }

@@ -2,22 +2,42 @@
 
 Xamboo v3
 =============================
-This is the build 005
+This is the build 6
 
 [![Build Status](https://travis-ci.org/webability/xamboo.svg?branch=master)](https://travis-ci.org/webability/xamboo)
+
+Xamboo is the result of over 15 years of manufacturing engineering frameworks.
+
+It is a very high quality framework for CMS, made in PHP 5.3 or higher, fully object-oriented and strong to distribute code into Web portals with heavy load and REST APIs optimization.
+
+Xamboo is freeware, and uses several other freeware components (DomCore, XConfig)
+
+Xamboo is an engine to build applications that distribute any type of code to the client:
+It is completely independent of the generated code, i.e. you can send HTML, XHTML, XML, SGML, javascript, JS, JSON, WAP, PDF, etc.
+
+Xamboo works on sites currently distributing more than **60 millions web pages monthly**, (that's near 500 pages per second on peak hour) it serves regular sites, and GRAPH-APIs / REST APIs to APP-mobiles.
 
 
 Manuals
 =======================
 
 Please refer to README.es.md for manual in spanish. (recommended to watch it as plain text)
-Please refer to README.en.md for manual in english. (recommended to watch it as plain text)
+Please refer to README.en.md for manual in english. (recommended to watch it as plain text) (google (bad) automatic translation)
 
 If you want to help converting the manual from text into .md file, you are most welcome.
 Translations are also welcome.
 
 Version Changes Control
 =======================
+
+  2018-01-29 Phil: Bug corrected on the execution of applylanguage of a library: must happen only if result is a string
+
+
+V3.0.6 - 2018-01-05
+-----------------------
+> Uses CORE 3.0.9
+> Uses XConfig 2.0.2
+- Bug corrected on the engines definition: 'language' entry was missing
 
 V3.0.5 - 2018-01-02
 -----------------------

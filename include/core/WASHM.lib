@@ -22,6 +22,9 @@
     
 Changes:
   2015-11-16: Phil, Rewrite the library to be fast, use implicit var mapper and only give support for files (for AFO cache files from datasources). The variables mapper is still available but under specific conditions and optinos.
+  2018-01-05: Phil, but corrected on destructor to be sure the shm has been created before its destruction
+  2018-04-01: Phil, shm id in hexa is not recognized anymore by PHP7, we have to convert it to integer
+  2018-05-15: Phil, add numattach to support reentrant methods (mainly when read build an object that call by itself read again on same SHM segment on _wakeup method)
 
 */
 
@@ -67,6 +70,7 @@ class WASHM extends WADebug
   private $project = null;  // the project for ftok if we dont use mapped
   private $shm = null;      // our shared memory segment resource pointer
   private $seg = null;      // our semaphore to protect access concurrency
+  private $numattach = 0;   // quantity of attach required, for reentrant SHM support
 
   public function __construct($size = null, $memid = null, $project = false)
   {
@@ -81,7 +85,12 @@ class WASHM extends WADebug
     if ($size)
       $this->size = $size;
     if ($memid)
-      $this->memid = $memid;
+    {
+      if (substr($memid, 0, 2) == '0x')
+        $this->memid = hexdec(substr($memid, 2));
+      else
+        $this->memid = $memid;
+    }
     
     $this->shm = shm_attach($this->memid, $this->size);
     if (!$this->shm)
@@ -98,22 +107,33 @@ class WASHM extends WADebug
 
   public function __destruct()
   {
-    shm_detach($this->shm);
+    if ($this->shm)
+      shm_detach($this->shm);
     $this->shm = null;
   }
 
   private function attach()
   {
-    $this->seg = sem_get($this->memid, 1, 0666, -1); 
-    $res = sem_acquire($this->seg);
-    if (!$res)
-      throw new \throwables\SHMError(\core\WAMessage::getMessage('WASHM.nosemacquire'));
+    if ($this->numattach == 0) // first attach
+    {
+      $this->seg = sem_get($this->memid, 1, 0666, -1); 
+      $res = sem_acquire($this->seg);
+      if (!$res)
+        throw new \throwables\SHMError(\core\WAMessage::getMessage('WASHM.nosemacquire'));
+    }
+    $this->numattach++;
   }
 
   private function detach()
   {
-    sem_release($this->seg);
-    $this->seg = null;
+    if ($this->numattach == 0) //nothing to detach
+      return;
+    $this->numattach--;
+    if ($this->numattach == 0) // definitive close
+    {
+      sem_release($this->seg);
+      $this->seg = null;
+    }
   }
 
   private function start()

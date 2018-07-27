@@ -8,72 +8,81 @@ Introduction:
 
 Xamboo is the result of over 15 years of manufacturing engineering frameworks.
 
-It is a very high quality framework for CMS, made in PHP 5.3 or higher, fully object-oriented and strong to distribute code into Web portals high reach or REST APIs optimization.
+It is a very high quality framework for CMS, made in PHP 5.3 or higher, fully object-oriented and strong to distribute code into Web portals with heavy load and REST APIs optimization.
 
-Xamboo is freeware, and turn uses several other freeware components (DomCore)
+Xamboo is freeware, and uses several other freeware components (DomCore, XConfig)
 
-Xamboo is an engine to build applications that dispense code to the client.
-It is completely independent of checked code, ie you can send both HTML 3, 4, 5, XHTML, XML, SGML including any tailor, javascript, JSON, WAP, etc.
+Xamboo is an engine to build applications that distribute any type of code to the client:
+It is completely independent of the generated code, i.e. you can send HTML, XHTML, XML, SGML, javascript, JS, JSON, WAP, PDF, etc.
+
 
 Armed examples are in HTML 5 and CSS3 Javascript.
 
 Xamboo not need a database to manage the entire structure of the framework, which makes it extremely fast, easy to use and powerful.
 
-Xamboo works on sites currently distributing more than **30 millions web pages monthly**, serves regular sites, and GRAPH-APIs / REST APIs to APP-mobiles.
+Xamboo works on sites currently distributing more than **60 millions web pages monthly**, (that's near 500 pages per second on peak hour) it serves regular sites, and GRAPH-APIs / REST APIs to APP-mobiles.
 
 
 Requirements:
 -----------------------
-To operate Xamboo, you need:
+To user Xamboo as your CMS framework, you will need:
 - A webserver (Apache, nginx, etc.)
-- PHP 5.3 minimum
+- PHP 5.3 minimum, PHP 7 recommended
 
 Installation
 -----------------------
-Always download the latest version from http://www.webability.info/?P=xamboo
-or from github https://github.com/webability/xamboo
+Always download the latest version from github https://github.com/webability/xamboo
 
-Gets a file format: xamboo-xx-yy-zz.tar.gz
-Where xx-yy-zz is the current version of the tool
+You will get a file with the format: xamboo-xx-yy-zz.tar.gz
+Where xx-yy-zz is the current version of the framework.
 
-1. Installation on the web server on Linux
-You must unzip the file xamboo-xx-yy-zz.tar.gz where you want to install
 
-When decompressing, creates a 'xamboo' folder with all the code inside.
+1. Linux installation
 
-This folder * should not * be in a public directory accessible by Web, either internet or local
+1.1 Files
 
-** It is recommended to put the code xamboo is a directory one level above the same web site, or in a directory accessible by the web site.
+You must unzip the file xamboo-xx-yy-zz.tar.gz where you want to install the Xamboo.
 
-Example:
+When decompressing, it will creates a 'xamboo' folder with all the code inside.
 
-Base directory website:
-/ Var / www
+This folder **should not** be in a public directory accessible by Web, either internet or local
 
-Unzip xamboo in / var:
+**Note: It is recommended to put the code xamboo is a directory one level above the same web site, or in a directory accessible by the web site.
 
-/ Var / xamboo
-/ Var / html
+Examples:
+
+In your linux server with an Apache, you generally have a base directory website:
+
+/var/www
+
+
+Unzip xamboo in /var and you obtain:
+
+/var/xamboo
+/var/html
+
 
 Within xamboo, there is a folder called "site".
-You can link this folder to the root of the website, or use any other folder to your liking, and copy the files present here in the root folder of the website.
+You can link this folder to the root of the website, or use any other folder as you like, and copy the files present here in the root folder of you website directory.
+
 
 
 2. Installing the wrapper
 
-Copy 2 index.php and .htaccess files in the public folder on the web
-Are in xamboo / site
+Copy the **index.php** and **.htaccess** files in the public folder you linked with yout webserver:
+They are in [?]/xamboo/site
 
-Edit the index.php file. At the beginning of the file, there are 3 directories that link Xamboo settings.
+Edit the **index.php** file.
+At the beginning of the file, there are 3 directories that link Xamboo settings.
 Change directories to link the system xamboo folder where you have installed.
-By default, searches xamboo a previous directory to the root of the site.
+By default, it will searches xamboo as the first parent directory of the website root dir.
 
-Index.php is indicative and may be increased to what is required for the proper functioning of your site (eg user login, logs hits, configuration and directories from file to database connection, etc .)
+**index.php** is and example and can be modified to what is required for the proper functioning of your site (eg user login, logs hits, configuration and directories from files, database connection, etc .)
 
-The .htaccess file in the same way, defines the rules to make the wrap apache to the index.
-You can make a arhico equivalent for other web servers if you do not use apache.
+The **.htaccess** file works the same way, it defines the rules to make the apache wraps to the index.
+You can make an access file equivalent for other web servers if you do not use apache.
 
-Described later in the capículo "Reference - Wrapper" the minimum needed to run Xamboo and how to use it.
+Please read below in the chapter "Reference - Wrapper" for the minimum requirements to run Xamboo and how to use it.
 
 
 3. Installing the maintenance file

@@ -21,7 +21,8 @@
     along with DomCore.  If not, see <http://www.gnu.org/licenses/>.
     
     History:
-    2017-02-03: Phil, add implementation of array access, countable, iterable, object access magic functions 
+    2017-02-03: Phil, add implementation of array access, countable, iterable, object access magic functions
+    2018-03-25: Phil, add implementation of attributes for each entry
 */
 
 /* @UML_Box
@@ -69,6 +70,7 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
   protected $id = '';
   protected $lang = '';
   protected $entries = array();
+  protected $attributes = array();
 
   public function __construct($data, $id = null, $lang = null)
   {
@@ -77,6 +79,7 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
     if (is_string($data))
     { // XML buffer
       $this->entries = WALanguageCompiler::compile($data);
+      $this->attributes = WALanguageCompiler::compileAttributes($data);
       $this->id = WALanguageCompiler::$id;
       $this->lang = WALanguageCompiler::$lang;
     }
@@ -93,6 +96,10 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
       if (isset($data['entries']))
         $this->entries = $data['entries'];
     }
+    if ($id)
+      $this->id = $id;
+    if ($lang)
+      $this->lang = $lang;
   }
 
   public function getId()
@@ -134,6 +141,19 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
     return $id;
   }
 
+  public function getAttribute($id, $attribute)
+  {
+    if (isset($this->attributes[$id][$attribute]))
+      return $this->attributes[$id][$attribute];
+    return null;
+  }
+
+  public function setAttribute($id, $attribute, $value)
+  {
+    $this->attributes[$id][$attribute] = $value;
+    return $this;
+  }
+
   // magic functions implements
   public function __get($name)
   {
@@ -156,6 +176,7 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
   public function __unset($name)
   {
     unset($this->entries[$name]);
+    unset($this->attributes[$name]);
   }
   
   // ArrayAccess implemented
@@ -218,6 +239,7 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
     $data['id'] = $this->id;
     $data['lang'] = $this->lang;
     $data['entries'] = $this->entries;
+    $data['attributes'] = $this->attributes;
   }
 
   protected function unserial($data)
@@ -225,11 +247,12 @@ class WALanguage extends WAClass implements \ArrayAccess, \Iterator, \Countable
     $this->id = $data['id'];
     $this->lang = $data['lang'];
     $this->entries = $data['entries'];
+    $this->attributes = $data['attributes'];
   }
 
   public function __toString()
   {
-    return WALanguageCompiler::create($this->id, $this->lang, $this->entries);
+    return WALanguageCompiler::create($this->id, $this->lang, $this->entries, $this->attributes);
   }
 
 }

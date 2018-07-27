@@ -190,7 +190,7 @@ class XBCode extends \core\WAClass
 
     if (!empty($result[0]))
     {
-      while (list($k, $E) = each($result[0]))
+      foreach($result[0] as $k => $E)
       {
         $pos = strpos($TEXT, $E);
         if ($result[41][$k] == '%') // invalidate any comment

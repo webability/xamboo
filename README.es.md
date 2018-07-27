@@ -1,6 +1,6 @@
 @UTF-8
 
-Xamboo v2 - Manual básico
+Xamboo v3 - Manual básico
 =========================
 
 Introducción:
@@ -26,7 +26,7 @@ Requerimientos:
 -----------------------
 Para hacer funcionar Xamboo, necesita:
 - un webserver (Apache, NGinx, etc.)
-- PHP 5.3 mínimo
+- PHP 5.3 mínimo, prefered PHP 7+
 
 Instalación
 -----------------------

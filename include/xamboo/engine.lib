@@ -40,6 +40,8 @@ Changes:
                    and global/local acceptpathparameters=yes/no implemented in .page
   2017-11-18 Phil: Added support for multilanguage entries into library server (.lib)
   2018-01-02 Phil: Added support for multilanguage entries into single pages server (.code)
+  2018-01-05 Phil: Bug corrected on the engines definition: 'language' entry was missing
+  2018-01-29 Phil: Bug corrected on the execution of applylanguage of a library: must happen only if result is a string
 
 @End_DESCR */
 
@@ -55,7 +57,7 @@ namespace xamboo;
 
 class engine extends \core\WAClass
 {
-  const VERSION = '3.0.5';
+  const VERSION = '3.0.6';
 
   public $URI = '';
   public $maincontext;
@@ -76,11 +78,13 @@ class engine extends \core\WAClass
       'template' => array(
           'type' => 'server',
           'server' => '\xamboo\XBTemplateServer',
+          'language' => false,
           'run' => false
         ),
       'language' => array(
           'type' => 'server',
           'server' => '\xamboo\XBLanguageServer',
+          'language' => false,
           'run' => false
         ),
     );
@@ -345,7 +349,8 @@ class engine extends \core\WAClass
         $libname = '\\'.str_replace(array('-'), '_', $uid);
         $pagelib = new $libname($template, $language);
         $text = $pagelib->run($this, $params, $method);
-        $text = $pagelib->applyLanguage($text);
+        if (is_string($text))
+          $text = $pagelib->applyLanguage($text);
       }
     }
 

@@ -23,6 +23,7 @@
     Changes:
     2015-06-09: Phil, add self::$debug to null, to protect the setDebug if used before the first instanciation
     2017-01-31: Phil, version change: adjustments on \Error, \Exception and throwable trait not capturable
+    2018-02-05: Phil, bug corrected into doDebug to print the variables passed
 */
 
 /* @UML_Box
@@ -86,7 +87,7 @@ namespace core;
 class WADebug
 {
   // DomCore version
-  const VERSION = '3.0.8';
+  const VERSION = '3.1.1';
 
   // All the functions entry
   const SYSTEM = 1;
@@ -284,7 +285,13 @@ class WADebug
       {
         $num = 1;
         foreach($args as $arg)
-          $message = str_replace('%', $this->__getValue($arg), $message);
+        {
+          $pos = strpos($message, '%');
+          if ($pos !== false)
+          {
+            $message = substr_replace($message, $this->__getValue($arg), $pos, strlen('%'));
+          }
+        }
       }
       if (self::$filter && stripos($message, self::$filter) === false)
         return;
