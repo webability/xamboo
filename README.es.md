@@ -97,29 +97,29 @@ Lo importante es que el sistema tenga acceso a el.
 
 5.1 Instalación muy básica
 
-/var/xamboo               Base de instalación
-/var/xamboo/include       Librerias PHP
-/var/xamboo/site          Raíz del Sitio Web 
-/var/xamboo/repository    Repositorio de datos del sitio
+ /var/xamboo               Base de instalación
+ /var/xamboo/include       Librerias PHP
+ /var/xamboo/site          Raíz del Sitio Web 
+ /var/xamboo/repository    Repositorio de datos del sitio
 
 
 5.2 instalación avanzada
 
 Se instala en /home/sites/mi-sitio.com la herramienta de la manera siguiente:
 
-/home/sites/mi-sitio.com                         Base de instalación
-/home/sites/mi-sitio.com/site                    Raíz del sitio web
-/home/sites/mi-sitio.com/include                 Librerias PHP en general
-/home/sites/mi-sitio.com/include/base            Librerias propias del sitio, poner aqui el Base.lib
-/home/sites/mi-sitio.com/include/core            Librerias del core (viene con Xamboo)
-/home/sites/mi-sitio.com/include/datasources     Librerias del engine Xamboo
-/home/sites/mi-sitio.com/include/entities        Librerias Singletones (acceso a bases de datos, utilerias, etc.)
-/home/sites/mi-sitio.com/include/pages           Páginas del sitio web
-/home/sites/mi-sitio.com/include/patterns        Librerias del engine Xamboo
-/home/sites/mi-sitio.com/include/throwables      Librerias del engine Xamboo
-/home/sites/mi-sitio.com/include/xamboo          Librerias del engine Xamboo
-/home/sites/mi-sitio.com/include/__autoload.inc  Autoload de los varios directorios de include (Viene con Xamboo, modificar para agregar todas las carpetas necesarias)
-/home/sites/mi-sitio.com/repository              Repositorio de datos de la acplicación
+ /home/sites/mi-sitio.com                         Base de instalación
+ /home/sites/mi-sitio.com/site                    Raíz del sitio web
+ /home/sites/mi-sitio.com/include                 Librerias PHP en general
+ /home/sites/mi-sitio.com/include/base            Librerias propias del sitio, poner aqui el Base.lib
+ /home/sites/mi-sitio.com/include/core            Librerias del core (viene con Xamboo)
+ /home/sites/mi-sitio.com/include/datasources     Librerias del engine Xamboo
+ /home/sites/mi-sitio.com/include/entities        Librerias Singletones (acceso a bases de datos, utilerias, etc.)
+ /home/sites/mi-sitio.com/include/pages           Páginas del sitio web
+ /home/sites/mi-sitio.com/include/patterns        Librerias del engine Xamboo
+ /home/sites/mi-sitio.com/include/throwables      Librerias del engine Xamboo
+ /home/sites/mi-sitio.com/include/xamboo          Librerias del engine Xamboo
+ /home/sites/mi-sitio.com/include/__autoload.inc  Autoload de los varios directorios de include (Viene con Xamboo, modificar para agregar todas las carpetas necesarias)
+ /home/sites/mi-sitio.com/repository              Repositorio de datos de la acplicación
 
 
 Se pueden ubicar las páginas dentro de repositorio de datos, o dentro del include, al gusto del webmaster. La ventaja de tenerlas dentro del include es hacer un backup de todo el código aparte de los datos que puedan estar dentro del repositorio, que suelen ser de tamaño más importante, pero de ciclo de vida mas largo (imágenes, caches, documentos, etc)
