@@ -98,8 +98,11 @@ Lo importante es que el sistema tenga acceso a el.
 5.1 Instalación muy básica
 
  /var/xamboo               Base de instalación
+ 
  /var/xamboo/include       Librerias PHP
+ 
  /var/xamboo/site          Raíz del Sitio Web 
+ 
  /var/xamboo/repository    Repositorio de datos del sitio
 
 
