@@ -31,12 +31,15 @@ Para hacer funcionar Xamboo, necesita:
 Instalación
 -----------------------
 Siempre bajar la última versión desde http://www.webability.info/?P=xamboo
+
 o desde github https://github.com/webability/xamboo
 
 Obtiene un archivo de formato:  xamboo-xx-yy-zz.tar.gz
+
 Donde xx-yy-zz es la versión actual de la herramienta
 
 1. Instalación sobre el web server en Linux
+
 Tiene que descomprimir el archivo xamboo-xx-yy-zz.tar.gz en donde lo quiere instalar
 
 Al descomprimir, crea una carpeta ‘xamboo’ con todo el código adentro.
@@ -48,29 +51,35 @@ Esta carpeta *no debe* de estar en un directorio público accesible por Web, sea 
 Ejemplo:
 
 Directorio base del sitio web:
-/var/www
+
+    /var/www
 
 Descomprimir xamboo en /var:
 
-/var/xamboo
-/var/html
+    /var/xamboo
+    /var/html
 
 Dentro de xamboo, hay una carpeta llamada "site".
+
 Puede enlazar esta carpeta a la raíz del sitio web, o usar cualquier otra carpeta a su gusto, y copiar los archivos presentes aquí en su carpeta raíz del sitio web.
 
 
 2. Instalación del wrapper
 
 Copiar los 2 archivos index.php y .htaccess en la carpeta pública del web
+
 Estan en xamboo/site
 
 Edite el archivo index.php. Al principio del archivo, hay 3 directorios que enlazan la configuración del Xamboo.
+
 Modifique los directorios para enlazar el sistema en donde haya instalado la carpeta xamboo.
+
 Por defecto, busca xamboo un directorio anterior a la raíz del sitio.
 
 El archivo index.php es indicativo, y puede ser aumentado de lo que se requiera para el buen funcionamiento de su sitio (por ejemplo login de usuarios, logs de hits, configuración y directorios a partir de archivos, conección a base de datos, etc.)
 
 El archivo .htaccess de la misma manera, define las reglas para hacer el wrap de apache hacia el index.
+
 Puede fabricar un arhico equivalente para otros web servers si no usa el apache.
 
 Se describe más adelante en el capículo "Referencia - Wrapper" lo mínimo necesario para hacer funcionar Xamboo y como usarlo.
@@ -79,6 +88,7 @@ Se describe más adelante en el capículo "Referencia - Wrapper" lo mínimo necesar
 3. Instalación del archivo de mantenimiento
 
 Copiar el archivo maintenance.html en la carpeta pública del web
+
 Esta en xamboo/site
 
 Este archivo se usa cuando el sistema se switchea a modo "mantimiento" desde la configuración. Puede especificar cualquier archivo, por defecto viene este.
@@ -87,9 +97,11 @@ Este archivo se usa cuando el sistema se switchea a modo "mantimiento" desde la 
 4. Instalación de la base de sistema
 
 Dentro del directorio xamboo/site, también viene un archivo Base.lib
+
 Este archivo contiene su propio archivo Base, derivado del Base_engine de Xamboo en el cual puede agregar toda la funcionalidad que necesita para su propio sitio.
 
 Puede dejar la libreria en la raíz de su sitio ( en donde copió index.php ), o protegerlo dentro de una carpeta de includes de clases propias.
+
 Lo importante es que el sistema tenga acceso a el.
 
 
@@ -97,32 +109,29 @@ Lo importante es que el sistema tenga acceso a el.
 
 5.1 Instalación muy básica
 
- /var/xamboo               Base de instalación
- 
- /var/xamboo/include       Librerias PHP
- 
- /var/xamboo/site          Raíz del Sitio Web 
- 
- /var/xamboo/repository    Repositorio de datos del sitio
+    /var/xamboo               Base de instalación
+    /var/xamboo/include       Librerias PHP
+    /var/xamboo/site          Raíz del Sitio Web
+    /var/xamboo/repository    Repositorio de datos del sitio
 
 
 5.2 instalación avanzada
 
 Se instala en /home/sites/mi-sitio.com la herramienta de la manera siguiente:
 
- /home/sites/mi-sitio.com                         Base de instalación
- /home/sites/mi-sitio.com/site                    Raíz del sitio web
- /home/sites/mi-sitio.com/include                 Librerias PHP en general
- /home/sites/mi-sitio.com/include/base            Librerias propias del sitio, poner aqui el Base.lib
- /home/sites/mi-sitio.com/include/core            Librerias del core (viene con Xamboo)
- /home/sites/mi-sitio.com/include/datasources     Librerias del engine Xamboo
- /home/sites/mi-sitio.com/include/entities        Librerias Singletones (acceso a bases de datos, utilerias, etc.)
- /home/sites/mi-sitio.com/include/pages           Páginas del sitio web
- /home/sites/mi-sitio.com/include/patterns        Librerias del engine Xamboo
- /home/sites/mi-sitio.com/include/throwables      Librerias del engine Xamboo
- /home/sites/mi-sitio.com/include/xamboo          Librerias del engine Xamboo
- /home/sites/mi-sitio.com/include/__autoload.inc  Autoload de los varios directorios de include (Viene con Xamboo, modificar para agregar todas las carpetas necesarias)
- /home/sites/mi-sitio.com/repository              Repositorio de datos de la acplicación
+    /home/sites/mi-sitio.com                         Base de instalación
+    /home/sites/mi-sitio.com/site                    Raíz del sitio web
+    /home/sites/mi-sitio.com/include                 Librerias PHP en general
+    /home/sites/mi-sitio.com/include/base            Librerias propias del sitio, poner aqui el Base.lib
+    /home/sites/mi-sitio.com/include/core            Librerias del core (viene con Xamboo)
+    /home/sites/mi-sitio.com/include/datasources     Librerias del engine Xamboo
+    /home/sites/mi-sitio.com/include/entities        Librerias Singletones (acceso a bases de datos, utilerias, etc.)
+    /home/sites/mi-sitio.com/include/pages           Páginas del sitio web
+    /home/sites/mi-sitio.com/include/patterns        Librerias del engine Xamboo
+    /home/sites/mi-sitio.com/include/throwables      Librerias del engine Xamboo
+    /home/sites/mi-sitio.com/include/xamboo          Librerias del engine Xamboo
+    /home/sites/mi-sitio.com/include/__autoload.inc  Autoload de los varios directorios de include (Viene con Xamboo, modificar para agregar todas las carpetas necesarias)
+    /home/sites/mi-sitio.com/repository              Repositorio de datos de la acplicación
 
 
 Se pueden ubicar las páginas dentro de repositorio de datos, o dentro del include, al gusto del webmaster. La ventaja de tenerlas dentro del include es hacer un backup de todo el código aparte de los datos que puedan estar dentro del repositorio, que suelen ser de tamaño más importante, pero de ciclo de vida mas largo (imágenes, caches, documentos, etc)
